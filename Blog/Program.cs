@@ -5,6 +5,7 @@ using Blog.Models;
 using Blog.Utilites;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -28,7 +29,10 @@ namespace Blog
                 .AddDefaultTokenProviders();
 
             builder.Services.AddMvc(option => option.EnableEndpointRouting = false).AddNewtonsoftJson();
-
+            builder.Services.ConfigureApplicationCookie(option =>
+            {
+                option.LoginPath = "/Login";
+            });
             builder.Services.AddScoped<IDbInitializer,DbInitializer>();
             builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.BottomRight; });
             var app = builder.Build();
