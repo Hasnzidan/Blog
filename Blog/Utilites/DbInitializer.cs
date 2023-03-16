@@ -31,7 +31,7 @@ namespace Blog.Utilites
                     LastName = "Admin",
                 },"Admin@0011").Wait();
 
-                var appUser = _context.ApplicationUser.FirstOrDefault(x => x.Email == "admin@gmail.com");
+                var appUser =  _context.ApplicationUser.FirstOrDefault(x => x.Email == "admin@gmail.com");
                 if(appUser != null)
                 {
                     _userManager.AddToRoleAsync(appUser, WebsiteRoles.WebsiteAdmin).GetAwaiter().GetResult();

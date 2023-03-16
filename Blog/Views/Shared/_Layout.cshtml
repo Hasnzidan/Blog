@@ -30,6 +30,7 @@
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Page" asp-action="About" >About</a></li>
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Page" asp-action="Contact" >Contact</a></li>
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Page" asp-action="PrivacyPolicy">PrivacyPolicy</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4"  asp-action="Login">Login</a></li>
 
                 </ul>
             </div>
@@ -81,6 +82,8 @@
     <!-- Core theme JS-->
     <script src="~/Blog/js/scripts.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    @await Component.InvokeAsync("Notyf")
+     
 
 </body>
 </html>

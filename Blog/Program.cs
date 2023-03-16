@@ -1,3 +1,5 @@
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 using Blog.Data;
 using Blog.Models;
 using Blog.Utilites;
@@ -13,7 +15,7 @@ namespace Blog
         public static void Main(string[] args)
         {
 
-            
+             
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -28,6 +30,7 @@ namespace Blog
             builder.Services.AddMvc(option => option.EnableEndpointRouting = false).AddNewtonsoftJson();
 
             builder.Services.AddScoped<IDbInitializer,DbInitializer>();
+            builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.BottomRight; });
             var app = builder.Build();
             DataSeeding();
 
@@ -38,11 +41,12 @@ namespace Blog
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseNotyf(); 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseMvc(routes =>
             {
