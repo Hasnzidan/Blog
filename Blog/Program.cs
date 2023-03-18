@@ -29,9 +29,11 @@ namespace Blog
                 .AddDefaultTokenProviders();
 
             builder.Services.AddMvc(option => option.EnableEndpointRouting = false).AddNewtonsoftJson();
-            builder.Services.ConfigureApplicationCookie(option =>
+            builder.Services.ConfigureApplicationCookie(options =>
             {
-                option.LoginPath = "/Login";
+                
+                options.LoginPath = "/Login";
+                options.AccessDeniedPath = "/AccessDenied";
             });
             builder.Services.AddScoped<IDbInitializer,DbInitializer>();
             builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.BottomRight; });
