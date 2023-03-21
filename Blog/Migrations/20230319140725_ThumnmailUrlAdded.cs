@@ -4,12 +4,12 @@
 
 namespace Blog.Migrations
 {
-    public partial class ThumnmailUrlAdded : Migration
+    public partial class ThumbnailUrlAdded : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "ThumnmailUrl",
+                name: "ThumbnailUrl",
                 table: "Posts",
                 type: "nvarchar(max)",
                 nullable: true);
@@ -18,7 +18,7 @@ namespace Blog.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ThumnmailUrl",
+                name: "ThumbnailUrl",
                 table: "Posts");
         }
     }

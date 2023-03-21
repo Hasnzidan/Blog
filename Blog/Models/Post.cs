@@ -10,6 +10,6 @@
         public DateTime CreateDate { get; set; } = DateTime.Now;
         public string? Description { get; set; }
         public string? Slug { get; set; }
-        public string? ThumnmailUrl { get; set; }
+        public string? ThumbnailUrl { get; set; }
     }
 }

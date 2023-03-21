@@ -48,7 +48,7 @@ namespace Blog.Areas.Admin.Controllers
             {
                 Id = x.Id,
                 Title = x.Title,
-                ThumnailUrl = x.ThumnmailUrl,
+                ThumnailUrl = x.ThumbnailUrl,
                 CreatedDate = x.CreateDate,
                 AuthorName = x.ApplicationUser!.FirstName + " " + x.ApplicationUser.LastName
 
@@ -88,7 +88,7 @@ namespace Blog.Areas.Admin.Controllers
 
             if(vm.Thumbnail != null)
             {
-                post.ThumnmailUrl = UploadImage(vm.Thumbnail);
+                post.ThumbnailUrl = UploadImage(vm.Thumbnail);
             }
 
             await _context.Posts!.AddAsync(post);
@@ -113,6 +113,72 @@ namespace Blog.Areas.Admin.Controllers
             }
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id) 
+        {
+            var post = await  _context.Posts!.FirstOrDefaultAsync(x => id == x.Id);
+            if (post == null)
+            {
+                _notification.Error("Post not Found");
+                return View();
+            }
+
+            var loggedInUser = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == User.Identity!.Name);
+            var loggedInUserRole = await _userManager.GetRolesAsync(loggedInUser!);
+            if (loggedInUserRole[0] != WebsiteRoles.WebsiteAdmin && loggedInUser!.Id != post.ApplicationUserId)
+            {
+                _notification.Error("You are not authorized");
+                return RedirectToAction("Index");
+            }
+
+
+
+            var vm = new CreatePostVM()
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Description = post.Description, 
+                ShortDescription = post.ShortDescription,
+                ThumbnailUrl = post.ThumbnailUrl
+            };
+
+
+            return View(vm);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(CreatePostVM vm)
+        {
+            if (!ModelState.IsValid){ return View();}
+
+            var post = await _context.Posts!.FirstOrDefaultAsync(x => x.Id == vm.Id);
+            if(post == null)
+            {
+                _notification.Error($"Post not Found");
+                return View();
+            }
+
+            post.Title = vm.Title;
+            post.Description = vm.Description;
+            post.ShortDescription = vm.ShortDescription;
+
+            if (vm.Thumbnail != null)
+            {
+                post.ThumbnailUrl = UploadImage(vm.Thumbnail);
+            }
+
+            await _context.SaveChangesAsync();
+            _notification.Success("Post Updated Successfully");
+
+
+            return RedirectToAction("Index", "Post", new {area="Admin"});
+
+
+        }
+
+
         private string UploadImage(IFormFile file)
         {
             string uniqueFileName = "";
