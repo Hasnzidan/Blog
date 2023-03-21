@@ -34,10 +34,10 @@
                     </div>
                     <div class="col-3">
                         <div class="mb-2">
-                            <img src="~/Thumbnails/defaultthumbnail.jpg" class="img-fluid" />
+                            <img src="~/Thumbnails/defaultthumbnail.jpg" class="img-fluid" id="thumbnail" />
                         </div>
                         <div class="mb-2">
-                            <label>Description</label>
+                            <label hidden>Thumbnail</label>
                             <input type="file" asp-for="Thumbnail" class="custom-file" />
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
@@ -49,6 +49,15 @@
 
             </form>
         </div>
-
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        $(".custom-file").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+            document.getElementById('thumbnail').src = window.URL.createObjectURL(this.files[0])
+        });
+    </script>
+}
