@@ -1,7 +1,7 @@
-﻿@model Blog.ViewModels.CreatePostVM
+﻿@model Blog.ViewModels.PageVM
 
 @{
-    ViewData["Title"] = "Edit Post";
+    ViewData["Title"] = " About Page";
 
 }
 
@@ -10,11 +10,11 @@
     <a class="btn btn-primary mb-1" asp-action="Index" asp-controller="Post">Go Back</a>
     <div class="card">
         <div class="card-header bg-primary ">
-            <h4 class="card-title text-white">Create new Post</h4>
+            <h4 class="card-title text-white">About Page</h4>
         </div>
         <div class="card-body">
-            <form asp-action="Edit" asp-controller="Post" asp-area="Admin" enctype="multipart/form-data">
-              <input type="hidden" asp-for="Id"  />
+            <form asp-action="About" asp-controller="Page" asp-area="Admin" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="ThumbnailUrl" />
                 <div class="row mb-2 ">
                     <div class="col-9">
@@ -25,8 +25,8 @@
                         </div>
                         <div class="mb-2">
                             <label>ShortDescription</label>
-                            <input type="text" asp-for="ShortDescription" class="form-control" />
-                            <span asp-validation-for="ShortDescription" class="text-danger"></span>
+                            <input type="text" asp-for="shortDescription" class="form-control" />
+                            <span asp-validation-for="shortDescription" class="text-danger"></span>
                         </div>
                         <div class="mb-2">
                             <label>Description</label>
@@ -36,19 +36,20 @@
                     </div>
                     <div class="col-3">
                         <div class="mb-2">
-                            
-                                @if (Model.ThumbnailUrl == null)
-                                {
-                            
-                                    <img src="~/Thumbnails/defaultthumbnail.jpg" class="img-fluid" id="thumbnail" />
-   
-                                }else
-                                {
-                                    <img src="~/Thumbnails/@Model.ThumbnailUrl" class="img-fluid" id="thumbnail" />
-   
-                                }
-                             
-                            
+
+                            @if (Model.ThumbnailUrl == null)
+                            {
+
+                                <img src="~/Thumbnails/defaultthumbnail.jpg" class="img-fluid" id="thumbnail" />
+
+                            }
+                            else
+                            {
+                                <img src="~/Thumbnails/@Model.ThumbnailUrl" class="img-fluid" id="thumbnail" />
+
+                            }
+
+
                         </div>
                         <div class="mb-2">
                             <label hidden>Thumbnail</label>
