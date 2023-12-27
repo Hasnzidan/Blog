@@ -1,23 +1,18 @@
-<<<<<<< HEAD
-﻿using AspNetCoreHero.ToastNotification.Abstractions;
+
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Blog.Data;
 using Blog.Models;
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-=======
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
->>>>>>> 627f543de931ab4f255c70144411217f979faff7
 
 namespace Blog.Areas.Admin.Controllers
 {
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     [Area("Admin")]
     public class SettingController : Controller
     {
-<<<<<<< HEAD
         private readonly ApplicationDbContext _context;
         public INotyfService _notification { get; }
         private readonly IWebHostEnvironment _webHostEnvironment;
@@ -25,15 +20,15 @@ namespace Blog.Areas.Admin.Controllers
             INotyfService notyfService,
             IWebHostEnvironment webHostEnvironment)
         {
-            _context=context;
-            _notification=notyfService;
-            _webHostEnvironment=webHostEnvironment;
+            _context = context;
+            _notification = notyfService;
+            _webHostEnvironment = webHostEnvironment;
         }
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var settings = _context.Settings!.ToList();
-            if (settings.Count > 0) 
+            if (settings.Count > 0)
             {
                 var vm = new SettingVM()
                 {
@@ -113,11 +108,4 @@ namespace Blog.Areas.Admin.Controllers
         }
     }
 
-=======
-        public IActionResult Index()
-        {
-            return View();
-        }
-    }
->>>>>>> 627f543de931ab4f255c70144411217f979faff7
 }
