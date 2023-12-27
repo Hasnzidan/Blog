@@ -40,7 +40,7 @@ namespace Blog.Areas.Admin.Controllers
             {
                 var singleUser = await _userManager.FindByIdAsync(user.Id);
                 var role = await _userManager.GetRolesAsync(singleUser);
-                user.Role = role.FirstOrDefault();
+                user.Role = role.FirstOrDefault()! ;
             }
 
             return View(vm);
@@ -145,7 +145,7 @@ namespace Blog.Areas.Admin.Controllers
         [HttpGet("Login")]
         public IActionResult Login()
         {
-            if (!HttpContext.User.Identity.IsAuthenticated)
+            if (!HttpContext.User.Identity!.IsAuthenticated)
             {
                 return View(new LoginVM());
             }
