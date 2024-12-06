@@ -1,6 +1,6 @@
-﻿@model Blog.ViewModels.PageVM
+@model Blog.ViewModels.PageVM
 @{
-    ViewData["Title"] = "Contact";
+    ViewData["Title"] = "Contact Us";
     string pageThumbnail = "";
     if (Model.ThumbnailUrl == null)
     {
@@ -18,7 +18,7 @@
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="page-heading">
                     <h1>@Model.Title</h1>
-                    <span class="subheading">@Model.shortDescription</span>
+                    <span class="subheading">@Model.ShortDescription</span>
                 </div>
             </div>
         </div>
@@ -29,7 +29,12 @@
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
-                @Html.Raw(Model.Description)
+                @if (!string.IsNullOrEmpty(Model.ThumbnailUrl))
+                {
+                    <img src="@Model.ThumbnailUrl" alt="@Model.Title" class="img-fluid mb-4" />
+                }
+
+                @Html.Raw(Model.Content)
             </div>
         </div>
     </div>

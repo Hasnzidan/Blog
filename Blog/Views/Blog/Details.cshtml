@@ -1,0 +1,113 @@
+@model Blog.Models.Post
+
+@{
+    ViewData["Title"] = System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn;
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Post Header -->
+            <header class="post-header mb-4">
+                @if (Model.Category != null)
+                {
+                    <a href="@Url.Action("Index", "Home", new { categorySlug = Model.Category.Slug })" class="category-badge mb-3">
+                        @(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.Category.NameAr : Model.Category.NameEn)
+                    </a>
+                }
+                <h1 class="post-title">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn)</h1>
+                <div class="post-meta">
+                    <span class="date">
+                        <i class="fas fa-calendar-alt"></i>
+                        @Model.CreateDate.ToString("dd MMM yyyy")
+                    </span>
+                    @if (Model.ApplicationUser != null)
+                    {
+                        <span class="author mx-3">
+                            <i class="fas fa-user"></i>
+                            @Model.ApplicationUser.FirstName @Model.ApplicationUser.LastName
+                        </span>
+                    }
+                </div>
+            </header>
+
+            <!-- Featured Image -->
+            @if (!string.IsNullOrEmpty(Model.ThumbnailUrl))
+            {
+                <div class="featured-image mb-4">
+                    <img src="@Model.GetThumbnailUrl()" class="img-fluid rounded" alt="@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn)">
+                </div>
+            }
+
+            <!-- Post Content -->
+            <article class="post-content">
+                @Html.Raw(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.DescriptionAr : Model.DescriptionEn)
+            </article>
+
+            <!-- Tags -->
+            @if (Model.PostTags != null && Model.PostTags.Any())
+            {
+                <div class="post-tags mt-4">
+                    <h5>الوسوم:</h5>
+                    <div class="tags">
+                        @foreach (var postTag in Model.PostTags)
+                        {
+                            <span class="badge bg-secondary me-2">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? postTag.Tag?.NameAr : postTag.Tag?.NameEn)</span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .post-header {
+            text-align: center;
+        }
+
+        .post-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .post-meta {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .category-badge:hover {
+            background-color: #0056b3;
+            color: white;
+            text-decoration: none;
+        }
+
+        .featured-image img {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+        }
+
+        .post-tags .badge {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+    </style>
+}

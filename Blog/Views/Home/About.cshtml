@@ -1,0 +1,144 @@
+@using Microsoft.Extensions.Localization
+@using Blog.Resources
+@inject IStringLocalizer<SharedResource> Localizer
+
+@{
+    ViewData["Title"] = @Localizer["About"];
+}
+
+@section Styles {
+    <style>
+        .about-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #363636 100%);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        .about-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('/images/pattern.png');
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .about-content {
+            padding: 40px 0;
+        }
+
+        .about-section {
+            margin-bottom: 60px;
+            padding: 30px;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .about-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .about-icon {
+            font-size: 2.5rem;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .team-member {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border: 5px solid #f8f9fa;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        [dir="rtl"] .about-section {
+            text-align: right;
+        }
+
+        [dir="ltr"] .about-section {
+            text-align: left;
+        }
+    </style>
+}
+
+<div class="about-header">
+    <div class="container">
+        <h1 class="display-4">@Localizer["AboutUs"]</h1>
+        <p class="lead">@Localizer["AboutUsSubtitle"]</p>
+    </div>
+</div>
+
+<div class="container about-content">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="about-section">
+                <div class="about-icon">
+                    <i class="fas fa-pencil-alt"></i>
+                </div>
+                <h3>@Localizer["OurMission"]</h3>
+                <p>@Localizer["OurMissionText"]</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="about-section">
+                <div class="about-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3>@Localizer["OurVision"]</h3>
+                <p>@Localizer["OurVisionText"]</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="about-section">
+                <div class="about-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>@Localizer["OurValues"]</h3>
+                <p>@Localizer["OurValuesText"]</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="about-section mt-5">
+        <h2 class="text-center mb-5">@Localizer["OurTeam"]</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="team-member">
+                    <img src="~/images/team/team1.jpg" alt="Team Member 1">
+                    <h4>@Localizer["TeamMember1Name"]</h4>
+                    <p>@Localizer["TeamMember1Role"]</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="team-member">
+                    <img src="~/images/team/team2.jpg" alt="Team Member 2">
+                    <h4>@Localizer["TeamMember2Name"]</h4>
+                    <p>@Localizer["TeamMember2Role"]</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="team-member">
+                    <img src="~/images/team/team3.jpg" alt="Team Member 3">
+                    <h4>@Localizer["TeamMember3Name"]</h4>
+                    <p>@Localizer["TeamMember3Role"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

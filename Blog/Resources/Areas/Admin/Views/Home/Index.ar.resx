@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Dashboard" xml:space="preserve">
+    <value>لوحة التحكم</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>المستخدمين</value>
+  </data>
+  <data name="Posts" xml:space="preserve">
+    <value>المقالات</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>التصنيفات</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>الوسوم</value>
+  </data>
+  <data name="Latest Posts" xml:space="preserve">
+    <value>آخر المقالات</value>
+  </data>
+  <data name="Latest Comments" xml:space="preserve">
+    <value>آخر التعليقات</value>
+  </data>
+  <data name="No posts found" xml:space="preserve">
+    <value>لا توجد مقالات</value>
+  </data>
+  <data name="No comments found" xml:space="preserve">
+    <value>لا توجد تعليقات</value>
+  </data>
+</root>

@@ -1,10 +1,8 @@
-﻿@model Blog.ViewModels.PageVM
+@model Blog.ViewModels.PageVM
 
 @{
-    ViewData["Title"] = " About Page";
-
+    ViewData["Title"] = "About Page";
 }
-
 
 <div class="container-fluid">
     <a class="btn btn-primary mb-1" asp-action="Index" asp-controller="Post">Go Back</a>
@@ -24,14 +22,14 @@
                             <span asp-validation-for="Title" class="text-danger"></span>
                         </div>
                         <div class="mb-2">
-                            <label>ShortDescription</label>
-                            <input type="text" asp-for="shortDescription" class="form-control" />
-                            <span asp-validation-for="shortDescription" class="text-danger"></span>
+                            <label>Short Description</label>
+                            <input type="text" asp-for="ShortDescription" class="form-control" />
+                            <span asp-validation-for="ShortDescription" class="text-danger"></span>
                         </div>
                         <div class="mb-2">
-                            <label>Description</label>
-                            <textarea id="richEditor" asp-for="Description" class="custom-file" rows="8"></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <label>Content</label>
+                            <textarea id="richEditor" asp-for="Content" class="custom-file" rows="8"></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-3">
@@ -54,7 +52,7 @@
                         <div class="mb-2">
                             <label hidden>Thumbnail</label>
                             <input type="file" asp-for="Thumbnail" class="custom-file" />
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <span asp-validation-for="Thumbnail" class="text-danger"></span>
                         </div>
                     </div>
                 </div>

@@ -1,52 +1,66 @@
-﻿@model List<Blog.ViewModels.PostVM>
+@model List<Blog.ViewModels.PostVM>
+@using Microsoft.Extensions.Localization
+@using Blog.Resources
+@inject IStringLocalizer<SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "List of Posts";
+    ViewData["Title"] = @Localizer["ListOfPosts"];
 }
 
 <div class="container-fluid">
-    <a class="btn btn-primary mb-1" asp-action="Create" asp-controller="Post" asp-area="Admin">Add Post</a>
+    <a class="btn btn-primary mb-1" asp-action="Create" asp-controller="Post" asp-area="Admin">@Localizer["AddPost"]</a>
     <div class="card">
-        <div class="card-header bg-primary ">
-            <h4 class="card-title text-white">List of Posts</h4>
+        <div class="card-header bg-primary">
+            <h4 class="card-title text-white">@Localizer["ListOfPosts"]</h4>
         </div>
-        <div class="card-body" style="background-color:lightgray;">
+        <div class="card-body bg-light">
             @foreach (var post in Model)
             {
-                <div class="rounded mb-4 bg-white p-1 ">
+                <div class="rounded mb-4 bg-white p-3">
                     <div class="row">
-                        <div class="col-2 d-flex iustify-content-center flex-column ">
-                          @if (post.ThumnailUrl == null)
-                            {
-                                <img class="img-fluid" src="~/Thumbnails/defaultthumbnail.jpg" style="object-fit:cover; height:100px; width:100%;" />
-
-                            }
-                            else
-                            {
-                                <img class="img-fluid" src="~/Thumbnails/@post.ThumnailUrl" style="object-fit:cover; height:100px; width:100%;" />
-
-                            }
+                        <div class="col-2 d-flex justify-content-center flex-column">
+                            <img class="img-fluid post-thumbnail" src="@(string.IsNullOrEmpty(post.ThumbnailUrl) ? "/Thumbnails/defaultthumbnail.jpg" : post.ThumbnailUrl)" alt="@post.TitleEn" />
                         </div>
-                        <div class="col-5 d-flex iustify-content-center flex-column ">
-                            <h4 style="font-size:1.5rem ; font-weight:bolder;" class="text-primary fw-bold" >@post.Title</h4>
-                            <p>@post.CreatedDate</p>
+                        <div class="col-5 d-flex justify-content-center flex-column">
+                            <h4 class="post-title text-primary">@post.TitleEn</h4>
+                            <p class="post-date">@post.CreatedDate.ToString("d")</p>
                         </div>
-                        <div class="col-5 text-right d-flex iustify-content-center flex-column">
-                            <h4 style="font-size:1rem;" class="text-primary fw-bold" >@post.AuthorName</h4>
-                            <div class="d-flex justify-content-end align-items-center ">
-                                <a class="btn btn-warning" asp-action="Edit" asp-controller="Post" asp-area="Admin" asp-route-id="@post.Id" method="post">Edit</a>|
-                                <form asp-action="Delete" asp-controller="Post" asp-area="Admin" asp-route-id="@post.Id" method="post" onsubmit="return confirm('Do you want to delete this post?')" >
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-
+                        <div class="col-5 d-flex justify-content-center flex-column">
+                            <h4 class="author-name text-primary">@post.AuthorName</h4>
+                            <div class="d-flex justify-content-end gap-2">
+                                <a class="btn btn-warning" asp-action="Edit" asp-controller="Post" asp-area="Admin" asp-route-id="@post.Id">@Localizer["Edit"]</a>
+                                <form asp-action="Delete" asp-controller="Post" asp-area="Admin" asp-route-id="@post.Id" method="post" class="d-inline" 
+                                      onsubmit="return confirm('@Localizer["DeleteConfirmation"]')">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger">@Localizer["Delete"]</button>
                                 </form>
                             </div>
                         </div>
-
                     </div>
                 </div>
             }
-
         </div>
-
     </div>
 </div>
+
+@section Styles {
+    <style>
+        .post-thumbnail {
+            object-fit: cover;
+            height: 100px;
+            width: 100%;
+        }
+        .post-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .author-name {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .gap-2 {
+            gap: 0.5rem;
+        }
+    </style>
+}

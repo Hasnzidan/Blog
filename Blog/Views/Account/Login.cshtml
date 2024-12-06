@@ -1,0 +1,130 @@
+@model Blog.ViewModels.LoginVM
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Login</h3>
+                    <div id="loginMessage" class="alert alert-danger" style="display: none;"></div>
+                    <form id="loginForm" asp-action="Login" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        @if (ViewData["ReturnUrl"] != null)
+                        {
+                            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                        }
+
+                        <div class="form-group mb-3">
+                            <label asp-for="UserName" class="control-label"></label>
+                            <input asp-for="UserName" class="form-control" placeholder="Enter your username or email" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Password" class="control-label"></label>
+                            <div class="input-group">
+                                <input asp-for="Password" class="form-control" type="password" placeholder="Enter your password" />
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <div class="form-check">
+                                <input asp-for="RememberMe" class="form-check-input" />
+                                <label asp-for="RememberMe" class="form-check-label"></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" id="loginButton">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                <span class="button-text">Login</span>
+                            </button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <a asp-action="ForgotPassword" class="text-decoration-none">Forgot Password?</a>
+                            <span class="mx-2">|</span>
+                            <a asp-action="Register" class="text-decoration-none">Register New Account</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Toggle password visibility
+            $("#togglePassword").click(function() {
+                var passwordInput = $("#Password");
+                var icon = $(this).find("i");
+                
+                if (passwordInput.attr("type") === "password") {
+                    passwordInput.attr("type", "text");
+                    icon.removeClass("fa-eye").addClass("fa-eye-slash");
+                } else {
+                    passwordInput.attr("type", "password");
+                    icon.removeClass("fa-eye-slash").addClass("fa-eye");
+                }
+            });
+
+            // Handle form submission
+            $("#loginForm").on("submit", function(e) {
+                e.preventDefault();
+                
+                var form = $(this);
+                var button = $("#loginButton");
+                var spinner = button.find(".spinner-border");
+                var buttonText = button.find(".button-text");
+                var messageDiv = $("#loginMessage");
+                
+                if (!form.valid()) {
+                    return false;
+                }
+                
+                // Disable button and show spinner
+                button.prop("disabled", true);
+                spinner.removeClass("d-none");
+                buttonText.text("Logging in...");
+                messageDiv.hide();
+                
+                $.ajax({
+                    url: form.attr("action"),
+                    method: "POST",
+                    data: form.serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.href = response.returnUrl || "/";
+                        } else {
+                            messageDiv.text(response.message || "Login failed. Please try again.").show();
+                            button.prop("disabled", false);
+                            spinner.addClass("d-none");
+                            buttonText.text("Login");
+                        }
+                    },
+                    error: function() {
+                        messageDiv.text("An error occurred. Please try again.").show();
+                        button.prop("disabled", false);
+                        spinner.addClass("d-none");
+                        buttonText.text("Login");
+                    }
+                });
+            });
+        });
+    </script>
+}

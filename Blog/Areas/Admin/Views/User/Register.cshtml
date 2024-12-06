@@ -1,10 +1,8 @@
-﻿@model Blog.ViewModels.RegisterVM
+@model Blog.ViewModels.RegisterVM
 
 @{
     ViewData["Title"] = "Register User";
-
 }
-
 
 <div class="container-fluid">
     <a class="btn btn-primary mb-1" asp-action="Index" asp-controller="User" >Go Back</a>
@@ -39,9 +37,12 @@
                     <input type="password" asp-for="Password" class="form-control" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
-                <div class="mb-2">
-               <input type="checkbox" class="custom-checkbox" asp-for="IsAdmin" />
-                    <label>Is Admin?</label>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select asp-for="Role" class="form-control">
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                    </select>
                 </div>
                 <div class="mb-2">
                     <button type="submit" class="btn btn-primary w-100 ">Register</button>

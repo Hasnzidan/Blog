@@ -1,0 +1,73 @@
+@model Blog.Models.Tag
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Blog.Resources.SharedResource> Localizer
+
+@{
+    ViewData["Title"] = Localizer["Create Tag"];
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="m-0">@Localizer["Create New Tag"]</h6>
+        <a asp-action="Index" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> @Localizer["Back to List"]
+        </a>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create" id="createTagForm">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="NameAr" class="control-label">@Localizer["Arabic Name"]</label>
+                        <div class="input-group" dir="rtl">
+                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                            <input asp-for="NameAr" class="form-control" placeholder="@Localizer["Enter Arabic name"]" />
+                        </div>
+                        <span asp-validation-for="NameAr" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="NameEn" class="control-label">@Localizer["English Name"]</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                            <input asp-for="NameEn" class="form-control" placeholder="@Localizer["Enter English name"]" />
+                        </div>
+                        <span asp-validation-for="NameEn" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> @Localizer["Create"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function () {
+            // Custom validation
+            $('#createTagForm').on('submit', function (e) {
+                var nameAr = $('#NameAr').val();
+                var nameEn = $('#NameEn').val();
+                
+                if (!nameAr && !nameEn) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: '@Localizer["Validation Error"]',
+                        text: '@Localizer["Please enter at least one name (Arabic or English)"]'
+                    });
+                }
+            });
+        });
+    </script>
+}

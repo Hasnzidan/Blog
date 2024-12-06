@@ -1,4 +1,4 @@
-﻿@model Blog.ViewModels.PageVM
+@model Blog.ViewModels.PageVM
 
 @{
     ViewData["Title"] = "About Page";
@@ -23,13 +23,13 @@
                         </div>
                         <div class="mb-2">
                             <label>Short Description</label>
-                            <input type="text" asp-for="shortDescription" class="form-control" />
-                            <span asp-validation-for="shortDescription" class="text-danger"></span>
+                            <input type="text" asp-for="ShortDescription" class="form-control" />
+                            <span asp-validation-for="ShortDescription" class="text-danger"></span>
                         </div>
                         <div class="mb-2">
                             <label>Description</label>
-                            <textarea id="richEditor" asp-for="Description" class="form-control" rows="8"></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <textarea id="richEditor" asp-for="Content" class="form-control" rows="8"></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-3">
@@ -51,7 +51,7 @@
                         <div class="mb-2">
                             <label>Thumbnail</label>
                             <input type="file" asp-for="Thumbnail" class="custom-file" />
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <span asp-validation-for="Thumbnail" class="text-danger"></span>
                         </div>
                     </div>
                 </div>

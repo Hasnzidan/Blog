@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+<!-- Categories Page -->
+<data name="Categories" xml:space="preserve">
+  <value>التصنيفات</value>
+</data>
+<data name="CreateNewCategory" xml:space="preserve">
+  <value>إضافة تصنيف جديد</value>
+</data>
+<data name="Name" xml:space="preserve">
+  <value>الاسم</value>
+</data>
+<data name="Description" xml:space="preserve">
+  <value>الوصف</value>
+</data>
+<data name="PostsCount" xml:space="preserve">
+  <value>عدد المقالات</value>
+</data>
+<data name="Actions" xml:space="preserve">
+  <value>الإجراءات</value>
+</data>
+<data name="Edit" xml:space="preserve">
+  <value>تعديل</value>
+</data>
+<data name="Delete" xml:space="preserve">
+  <value>حذف</value>
+</data>
+<data name="DeleteConfirmation" xml:space="preserve">
+  <value>هل أنت متأكد من حذف هذا التصنيف؟</value>
+</data>
+  <!-- About Page -->
+  <data name="AboutUs" xml:space="preserve">
+    <value>من نحن</value>
+  </data>
+  <data name="AboutUsSubtitle" xml:space="preserve">
+    <value>اكتشف قصتنا ورسالتنا</value>
+  </data>
+  <data name="OurMission" xml:space="preserve">
+    <value>مهمتنا</value>
+  </data>
+  <data name="OurMissionText" xml:space="preserve">
+    <value>تقديم محتوى عالي الجودة وجذاب يُعلم ويُثقف ويُلهم قراءنا.</value>
+  </data>
+  <data name="OurVision" xml:space="preserve">
+    <value>رؤيتنا</value>
+  </data>
+  <data name="OurVisionText" xml:space="preserve">
+    <value>أن نصبح المنصة متعددة اللغات الرائدة في مشاركة المعرفة وتعزيز النقاشات الهادفة.</value>
+  </data>
+  <data name="OurValues" xml:space="preserve">
+    <value>قيمنا</value>
+  </data>
+  <data name="OurValuesText" xml:space="preserve">
+    <value>النزاهة والتنوع والابتكار والالتزام بالتميز يوجهون كل ما نقوم به.</value>
+  </data>
+  <data name="OurTeam" xml:space="preserve">
+    <value>فريقنا</value>
+  </data>
+  <data name="TeamMember1Name" xml:space="preserve">
+    <value>أحمد محمد</value>
+  </data>
+  <data name="TeamMember1Role" xml:space="preserve">
+    <value>المؤسس ورئيس التحرير</value>
+  </data>
+  <data name="TeamMember2Name" xml:space="preserve">
+    <value>سارة عبدالله</value>
+  </data>
+  <data name="TeamMember2Role" xml:space="preserve">
+    <value>مديرة المحتوى</value>
+  </data>
+  <data name="TeamMember3Name" xml:space="preserve">
+    <value>محمد خالد</value>
+  </data>
+  <data name="TeamMember3Role" xml:space="preserve">
+    <value>المدير التقني</value>
+  </data>
+
+  <!-- Contact Page -->
+  <data name="ContactUs" xml:space="preserve">
+    <value>اتصل بنا</value>
+  </data>
+  <data name="ContactUsSubtitle" xml:space="preserve">
+    <value>تواصل مع فريقنا</value>
+  </data>
+  <data name="SendMessage" xml:space="preserve">
+    <value>إرسال الرسالة</value>
+  </data>
+  <data name="YourName" xml:space="preserve">
+    <value>اسمك</value>
+  </data>
+  <data name="YourEmail" xml:space="preserve">
+    <value>بريدك الإلكتروني</value>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>الموضوع</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>الرسالة</value>
+  </data>
+  <data name="GetInTouch" xml:space="preserve">
+    <value>ابقَ على تواصل</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="AddressText" xml:space="preserve">
+    <value>١٢٣ شارع المدونة، المدينة الرقمية، ١٢٣٤٥</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>الهاتف</value>
+  </data>
+  <data name="PhoneText" xml:space="preserve">
+    <value>+١ (٥٥٥) ١٢٣-٤٥٦٧</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="EmailText" xml:space="preserve">
+    <value>contact@yourblog.com</value>
+  </data>
+
+  <!-- Privacy Page -->
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>سياسة الخصوصية</value>
+  </data>
+  <data name="PrivacyPolicySubtitle" xml:space="preserve">
+    <value>كيف نحمي ونتعامل مع معلوماتك</value>
+  </data>
+  <data name="Introduction" xml:space="preserve">
+    <value>مقدمة</value>
+  </data>
+  <data name="PrivacyIntroText" xml:space="preserve">
+    <value>نحن ملتزمون بحماية خصوصيتك وضمان أمن معلوماتك الشخصية. توضح سياسة الخصوصية هذه كيفية جمع واستخدام وحماية بياناتك.</value>
+  </data>
+  <data name="InformationWeCollect" xml:space="preserve">
+    <value>المعلومات التي نجمعها</value>
+  </data>
+  <data name="PersonalInformation" xml:space="preserve">
+    <value>المعلومات الشخصية</value>
+  </data>
+  <data name="PersonalInformationText" xml:space="preserve">
+    <value>نقوم بجمع الأنواع التالية من المعلومات الشخصية:</value>
+  </data>
+  <data name="PersonalInfo1" xml:space="preserve">
+    <value>الاسم ومعلومات الاتصال</value>
+  </data>
+  <data name="PersonalInfo2" xml:space="preserve">
+    <value>بيانات اعتماد الحساب</value>
+  </data>
+  <data name="PersonalInfo3" xml:space="preserve">
+    <value>بيانات الاستخدام والتفضيلات</value>
+  </data>
+  <data name="PersonalInfo4" xml:space="preserve">
+    <value>سجل المراسلات</value>
+  </data>
+  <data name="HowWeUseInformation" xml:space="preserve">
+    <value>كيف نستخدم المعلومات</value>
+  </data>
+  <data name="HowWeUseInformationText" xml:space="preserve">
+    <value>نستخدم معلوماتك للأغراض التالية:</value>
+  </data>
+  <data name="UseInfo1" xml:space="preserve">
+    <value>لتقديم وتحسين خدماتنا</value>
+  </data>
+  <data name="UseInfo2" xml:space="preserve">
+    <value>للتواصل معك</value>
+  </data>
+  <data name="UseInfo3" xml:space="preserve">
+    <value>لضمان الأمن ومنع الاحتيال</value>
+  </data>
+  <data name="UseInfo4" xml:space="preserve">
+    <value>للامتثال للالتزامات القانونية</value>
+  </data>
+  <data name="Cookies" xml:space="preserve">
+    <value>ملفات تعريف الارتباط</value>
+  </data>
+  <data name="CookiesText" xml:space="preserve">
+    <value>نستخدم ملفات تعريف الارتباط لتحسين تجربة التصفح وتحليل حركة المرور للموقع. يمكنك التحكم في إعدادات ملفات تعريف الارتباط من خلال تفضيلات المتصفح.</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>الأمان</value>
+  </data>
+  <data name="SecurityText" xml:space="preserve">
+    <value>نقوم بتنفيذ تدابير تقنية وتنظيمية مناسبة لحماية معلوماتك الشخصية من الوصول أو الكشف غير المصرح به.</value>
+  </data>
+  <data name="YourRights" xml:space="preserve">
+    <value>حقوقك</value>
+  </data>
+  <data name="YourRightsText" xml:space="preserve">
+    <value>لديك الحقوق التالية فيما يتعلق بمعلوماتك الشخصية:</value>
+  </data>
+  <data name="Rights1" xml:space="preserve">
+    <value>الحق في الوصول إلى بياناتك الشخصية</value>
+  </data>
+  <data name="Rights2" xml:space="preserve">
+    <value>الحق في طلب التصحيحات</value>
+  </data>
+  <data name="Rights3" xml:space="preserve">
+    <value>الحق في طلب الحذف</value>
+  </data>
+  <data name="Rights4" xml:space="preserve">
+    <value>الحق في سحب الموافقة</value>
+  </data>
+  <data name="PrivacyContactText" xml:space="preserve">
+    <value>إذا كان لديك أي أسئلة حول سياسة الخصوصية أو كيفية تعاملنا مع بياناتك، يرجى الاتصال بنا.</value>
+  </data>
+  <data name="LastUpdated" xml:space="preserve">
+    <value>آخر تحديث</value>
+  </data>
+  <!-- Post Management -->
+<data name="CreatePost" xml:space="preserve">
+  <value>إنشاء مقال</value>
+</data>
+<data name="EditPost" xml:space="preserve">
+  <value>تعديل المقال</value>
+</data>
+<data name="GoBack" xml:space="preserve">
+  <value>رجوع</value>
+</data>
+<data name="CreateNewPost" xml:space="preserve">
+  <value>إنشاء مقال جديد</value>
+</data>
+<data name="Title" xml:space="preserve">
+  <value>العنوان</value>
+</data>
+<data name="ShortDescription" xml:space="preserve">
+  <value>وصف مختصر</value>
+</data>
+<data name="Description" xml:space="preserve">
+  <value>الوصف</value>
+</data>
+<data name="Category" xml:space="preserve">
+  <value>التصنيف</value>
+</data>
+<data name="SelectCategory" xml:space="preserve">
+  <value>اختر التصنيف</value>
+</data>
+<data name="Thumbnail" xml:space="preserve">
+  <value>الصورة المصغرة</value>
+</data>
+<data name="Save" xml:space="preserve">
+  <value>حفظ</value>
+</data>
+<data name="PostCreatedSuccessfully" xml:space="preserve">
+  <value>تم إنشاء المقال بنجاح</value>
+</data>
+<data name="PostUpdatedSuccessfully" xml:space="preserve">
+  <value>تم تحديث المقال بنجاح</value>
+</data>
+<data name="PostNotFound" xml:space="preserve">
+  <value>المقال غير موجود</value>
+</data>
+</root>

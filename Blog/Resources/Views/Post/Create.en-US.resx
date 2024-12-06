@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <data name="CreatePost" xml:space="preserve">
+    <value>Create Post</value>
+  </data>
+  <data name="CreateNewPost" xml:space="preserve">
+    <value>Create New Post</value>
+  </data>
+  <data name="ShareYourThoughts" xml:space="preserve">
+    <value>Share your thoughts with the world</value>
+  </data>
+  <data name="ArabicContent" xml:space="preserve">
+    <value>Arabic Content</value>
+  </data>
+  <data name="EnglishContent" xml:space="preserve">
+    <value>English Content</value>
+  </data>
+  <data name="TitleAr" xml:space="preserve">
+    <value>Arabic Title</value>
+  </data>
+  <data name="TitleEn" xml:space="preserve">
+    <value>English Title</value>
+  </data>
+  <data name="EnterTitleAr" xml:space="preserve">
+    <value>Enter post title in Arabic</value>
+  </data>
+  <data name="EnterTitleEn" xml:space="preserve">
+    <value>Enter post title in English</value>
+  </data>
+  <data name="ShortDescriptionAr" xml:space="preserve">
+    <value>Arabic Short Description</value>
+  </data>
+  <data name="ShortDescriptionEn" xml:space="preserve">
+    <value>English Short Description</value>
+  </data>
+  <data name="EnterShortDescriptionAr" xml:space="preserve">
+    <value>Brief description of your post in Arabic</value>
+  </data>
+  <data name="EnterShortDescriptionEn" xml:space="preserve">
+    <value>Brief description of your post in English</value>
+  </data>
+  <data name="ContentAr" xml:space="preserve">
+    <value>Arabic Content</value>
+  </data>
+  <data name="ContentEn" xml:space="preserve">
+    <value>English Content</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="SelectCategory" xml:space="preserve">
+    <value>Select a category</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="SelectTags" xml:space="preserve">
+    <value>Select tags</value>
+  </data>
+  <data name="ThumbnailImage" xml:space="preserve">
+    <value>Thumbnail Image</value>
+  </data>
+  <data name="ThumbnailPreview" xml:space="preserve">
+    <value>Thumbnail preview</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="PublishPost" xml:space="preserve">
+    <value>Publish Post</value>
+  </data>
+  <data name="PleaseEnterContent" xml:space="preserve">
+    <value>Please enter post content in both languages</value>
+  </data>
+  <data name="PleaseEnterTitle" xml:space="preserve">
+    <value>Please enter post title in both languages</value>
+  </data>
+</root>

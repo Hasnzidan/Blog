@@ -1,6 +1,149 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
-}
-<h1>@ViewData["Title"]</h1>
+@using Microsoft.Extensions.Localization
+@using Blog.Resources
+@inject IStringLocalizer<SharedResource> Localizer
 
-<p>Use this page to detail your site's privacy policy.</p>
+@{
+    ViewData["Title"] = @Localizer["PrivacyPolicy"];
+}
+
+@section Styles {
+    <style>
+        .privacy-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #363636 100%);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        .privacy-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('/images/pattern.png');
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .privacy-section {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .privacy-section h2 {
+            color: #333;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .privacy-section h3 {
+            color: #555;
+            margin: 20px 0 15px;
+        }
+
+        .privacy-section p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .privacy-section ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .privacy-section li {
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        [dir="rtl"] .privacy-section {
+            text-align: right;
+        }
+
+        [dir="ltr"] .privacy-section {
+            text-align: left;
+        }
+
+        .last-updated {
+            font-style: italic;
+            color: #888;
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
+}
+
+<div class="privacy-header">
+    <div class="container">
+        <h1 class="display-4">@Localizer["PrivacyPolicy"]</h1>
+        <p class="lead">@Localizer["PrivacyPolicySubtitle"]</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="privacy-section">
+        <h2>@Localizer["Introduction"]</h2>
+        <p>@Localizer["PrivacyIntroText"]</p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>@Localizer["InformationWeCollect"]</h2>
+        <h3>@Localizer["PersonalInformation"]</h3>
+        <p>@Localizer["PersonalInformationText"]</p>
+        <ul>
+            <li>@Localizer["PersonalInfo1"]</li>
+            <li>@Localizer["PersonalInfo2"]</li>
+            <li>@Localizer["PersonalInfo3"]</li>
+            <li>@Localizer["PersonalInfo4"]</li>
+        </ul>
+    </div>
+
+    <div class="privacy-section">
+        <h2>@Localizer["HowWeUseInformation"]</h2>
+        <p>@Localizer["HowWeUseInformationText"]</p>
+        <ul>
+            <li>@Localizer["UseInfo1"]</li>
+            <li>@Localizer["UseInfo2"]</li>
+            <li>@Localizer["UseInfo3"]</li>
+            <li>@Localizer["UseInfo4"]</li>
+        </ul>
+    </div>
+
+    <div class="privacy-section">
+        <h2>@Localizer["Cookies"]</h2>
+        <p>@Localizer["CookiesText"]</p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>@Localizer["Security"]</h2>
+        <p>@Localizer["SecurityText"]</p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>@Localizer["YourRights"]</h2>
+        <p>@Localizer["YourRightsText"]</p>
+        <ul>
+            <li>@Localizer["Rights1"]</li>
+            <li>@Localizer["Rights2"]</li>
+            <li>@Localizer["Rights3"]</li>
+            <li>@Localizer["Rights4"]</li>
+        </ul>
+    </div>
+
+    <div class="privacy-section">
+        <h2>@Localizer["ContactUs"]</h2>
+        <p>@Localizer["PrivacyContactText"]</p>
+    </div>
+
+    <p class="last-updated">@Localizer["LastUpdated"]: @DateTime.Now.ToString("MMMM dd, yyyy")</p>
+</div>

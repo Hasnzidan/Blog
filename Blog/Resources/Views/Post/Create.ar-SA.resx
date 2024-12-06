@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <data name="CreatePost" xml:space="preserve">
+    <value>إنشاء مقال</value>
+  </data>
+  <data name="CreateNewPost" xml:space="preserve">
+    <value>إنشاء مقال جديد</value>
+  </data>
+  <data name="ShareYourThoughts" xml:space="preserve">
+    <value>شارك أفكارك مع العالم</value>
+  </data>
+  <data name="ArabicContent" xml:space="preserve">
+    <value>المحتوى العربي</value>
+  </data>
+  <data name="EnglishContent" xml:space="preserve">
+    <value>المحتوى الإنجليزي</value>
+  </data>
+  <data name="TitleAr" xml:space="preserve">
+    <value>العنوان بالعربية</value>
+  </data>
+  <data name="TitleEn" xml:space="preserve">
+    <value>العنوان بالإنجليزية</value>
+  </data>
+  <data name="EnterTitleAr" xml:space="preserve">
+    <value>أدخل عنوان المقال بالعربية</value>
+  </data>
+  <data name="EnterTitleEn" xml:space="preserve">
+    <value>أدخل عنوان المقال بالإنجليزية</value>
+  </data>
+  <data name="ShortDescriptionAr" xml:space="preserve">
+    <value>الوصف المختصر بالعربية</value>
+  </data>
+  <data name="ShortDescriptionEn" xml:space="preserve">
+    <value>الوصف المختصر بالإنجليزية</value>
+  </data>
+  <data name="EnterShortDescriptionAr" xml:space="preserve">
+    <value>أدخل وصفاً مختصراً للمقال بالعربية</value>
+  </data>
+  <data name="EnterShortDescriptionEn" xml:space="preserve">
+    <value>أدخل وصفاً مختصراً للمقال بالإنجليزية</value>
+  </data>
+  <data name="ContentAr" xml:space="preserve">
+    <value>المحتوى بالعربية</value>
+  </data>
+  <data name="ContentEn" xml:space="preserve">
+    <value>المحتوى بالإنجليزية</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>التصنيف</value>
+  </data>
+  <data name="SelectCategory" xml:space="preserve">
+    <value>اختر تصنيفاً</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>الوسوم</value>
+  </data>
+  <data name="SelectTags" xml:space="preserve">
+    <value>اختر الوسوم</value>
+  </data>
+  <data name="ThumbnailImage" xml:space="preserve">
+    <value>الصورة المصغرة</value>
+  </data>
+  <data name="ThumbnailPreview" xml:space="preserve">
+    <value>معاينة الصورة المصغرة</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="PublishPost" xml:space="preserve">
+    <value>نشر المقال</value>
+  </data>
+  <data name="PleaseEnterContent" xml:space="preserve">
+    <value>الرجاء إدخال محتوى المقال باللغتين</value>
+  </data>
+  <data name="PleaseEnterTitle" xml:space="preserve">
+    <value>الرجاء إدخال عنوان المقال باللغتين</value>
+  </data>
+</root>

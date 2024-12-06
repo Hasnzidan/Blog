@@ -16,3 +16,33 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* RTL Support */
+[dir="rtl"] .sidebar {
+    right: 0;
+    left: auto;
+}
+
+[dir="rtl"] .main {
+    margin-right: 250px;
+    margin-left: 0;
+}
+
+[dir="rtl"] .nav-link i {
+    margin-left: 10px;
+    margin-right: 0;
+}
+
+[dir="rtl"] .dropdown-menu {
+    text-align: right;
+}
+
+[dir="rtl"] .ms-auto {
+    margin-right: auto !important;
+    margin-left: 0 !important;
+}
+
+[dir="rtl"] .me-auto {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}

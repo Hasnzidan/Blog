@@ -1,79 +1,240 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model IEnumerable<Blog.Models.Post>
+
+@{
+    ViewData["Title"] = "Home";
 }
 
+@section Styles {
+    <style>
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1a1a1a 0%, #363636 100%);
+            color: white;
+            padding: 100px 0;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
 
-<header class="masthead" style="background-image: url('/Blog/assets/img/home-bg.jpg')">
-    <div class="container position-relative px-4 px-lg-5">
-        <div class="row gx-4 gx-lg-5 justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-7">
-                <div class="site-heading">
-                    <h1>Clean Blog</h1>
-                    <span class="subheading">A Blog Theme by Start Bootstrap</span>
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('/images/pattern.png');
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            animation: fade-in-up 1s ease-out;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            animation: fade-in-up 1s ease-out 0.2s;
+        }
+
+        /* Categories */
+        .categories {
+            margin-bottom: 40px;
+        }
+
+        .categories-list {
+            margin-bottom: 2rem;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            background-color: #f8f9fa;
+            color: #333;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .category-badge:hover,
+        .category-badge.active {
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Posts */
+        .post-card {
+            transition: transform 0.3s ease;
+            border: none;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .post-thumbnail {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .post-category {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: #007bff;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .post-category:hover {
+            background-color: #0056b3;
+            color: white;
+            text-decoration: none;
+        }
+
+        .post-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .post-description {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+        .read-more {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .read-more:hover {
+            background-color: #0056b3;
+            color: white;
+            text-decoration: none;
+        }
+
+        .no-posts {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin: 2rem 0;
+        }
+
+        @@media (max-width: 768px) {
+            .hero {
+                padding: 60px 0;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+}
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container text-center">
+        <h1>مرحباً بك في مدونتنا</h1>
+        <p>اكتشف مقالات متنوعة في مجالات مختلفة</p>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories">
+    <div class="container">
+        <div class="categories-list text-center mb-4">
+            <a href="@Url.Action("Index", "Home")" class="category-badge @(string.IsNullOrEmpty(Context.Request.Query["categorySlug"]) ? "active" : "")">الكل</a>
+            @foreach (var category in ViewBag.Categories ?? new List<Blog.Models.Category>())
+            {
+                <a href="@Url.Action("Index", "Home", new { categorySlug = category.Slug })" 
+                   class="category-badge @(Context.Request.Query["categorySlug"] == category.Slug ? "active" : "")">
+                    @category.Name
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Posts Section -->
+<section class="posts">
+    <div class="container">
+        <h2 class="section-title mb-4">أحدث المقالات</h2>
+        <div class="row">
+            @if (!Model.Any())
+            {
+                <div class="col-12 text-center">
+                    <p class="no-posts">لا توجد مقالات في هذا التصنيف</p>
                 </div>
-            </div>
+            }
+            else
+            {
+                @foreach (var post in Model)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card post-card h-100">
+                            <img src="@post.GetThumbnailUrl()" class="img-fluid rounded" alt="@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? post.TitleAr : post.TitleEn)">
+                            @if (post.Category != null)
+                            {
+                                <a href="@Url.Action("Index", "Home", new { categorySlug = post.Category.Slug })" 
+                                   class="post-category">@post.Category.Name</a>
+                            }
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="post-title">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? post.TitleAr : post.TitleEn)</h5>
+                                <p class="post-meta">
+                                    <i class="fas fa-calendar-alt"></i> @post.CreateDate.ToString("dd MMM yyyy")
+                                    @if (post.ApplicationUser != null)
+                                    {
+                                        <span class="mx-2">|</span>
+                                        <i class="fas fa-user"></i> @post.ApplicationUser.FirstName @post.ApplicationUser.LastName
+                                    }
+                                </p>
+                                <p class="post-description flex-grow-1">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? post.ShortDescriptionAr : post.ShortDescriptionEn)</p>
+                                <a href="@Url.Action("Details", "Blog", new { slug = post.Slug })" class="read-more mt-auto">اقرأ المزيد</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
         </div>
     </div>
-</header>
+</section>
 
-<div class="container px-4 px-lg-5">
-    <div class="row gx-4 gx-lg-5 justify-content-center">
-        <div class="col-md-10 col-lg-8 col-xl-7">
-            <!-- Post preview-->
-            <div class="post-preview">
-                <a href="post.html">
-                    <h2 class="post-title">Man must explore, and this is exploration at its greatest</h2>
-                    <h3 class="post-subtitle">Problems look mighty small from 150 miles up</h3>
-                </a>
-                <p class="post-meta">
-                    Posted by
-                    <a href="#!">Start Bootstrap</a>
-                    on September 24, 2022
-                </p>
-            </div>
-            <!-- Divider-->
-            <hr class="my-4" />
-            <!-- Post preview-->
-            <div class="post-preview">
-                <a href="post.html"><h2 class="post-title">I believe every human has a finite number of heartbeats. I don't intend to waste any of mine.</h2></a>
-                <p class="post-meta">
-                    Posted by
-                    <a href="#!">Start Bootstrap</a>
-                    on September 18, 2022
-                </p>
-            </div>
-            <!-- Divider-->
-            <hr class="my-4" />
-            <!-- Post preview-->
-            <div class="post-preview">
-                <a href="post.html">
-                    <h2 class="post-title">Science has not yet mastered prophecy</h2>
-                    <h3 class="post-subtitle">We predict too much for the next year and yet far too little for the next ten.</h3>
-                </a>
-                <p class="post-meta">
-                    Posted by
-                    <a href="#!">Start Bootstrap</a>
-                    on August 24, 2022
-                </p>
-            </div>
-            <!-- Divider-->
-            <hr class="my-4" />
-            <!-- Post preview-->
-            <div class="post-preview">
-                <a href="post.html">
-                    <h2 class="post-title">Failure is not an option</h2>
-                    <h3 class="post-subtitle">Many say exploration is part of our destiny, but it’s actually our duty to future generations.</h3>
-                </a>
-                <p class="post-meta">
-                    Posted by
-                    <a href="#!">Start Bootstrap</a>
-                    on July 8, 2022
-                </p>
-            </div>
-            <!-- Divider-->
-            <hr class="my-4" />
-            <!-- Pager-->
-            <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
-        </div>
-    </div>
-</div>
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Add smooth scrolling to all links
+            $("a").on('click', function(event) {
+                if (this.hash !== "") {
+                    event.preventDefault();
+                    var hash = this.hash;
+                    $('html, body').animate({
+                        scrollTop: $(hash).offset().top
+                    }, 800);
+                }
+            });
+        });
+    </script>
+}

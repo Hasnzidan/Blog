@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+<!-- Categories Page -->
+<data name="Categories" xml:space="preserve">
+  <value>Categories</value>
+</data>
+<data name="CreateNewCategory" xml:space="preserve">
+  <value>Create New Category</value>
+</data>
+<data name="Name" xml:space="preserve">
+  <value>Name</value>
+</data>
+<data name="Description" xml:space="preserve">
+  <value>Description</value>
+</data>
+<data name="PostsCount" xml:space="preserve">
+  <value>Posts Count</value>
+</data>
+<data name="Actions" xml:space="preserve">
+  <value>Actions</value>
+</data>
+<data name="Edit" xml:space="preserve">
+  <value>Edit</value>
+</data>
+<data name="Delete" xml:space="preserve">
+  <value>Delete</value>
+</data>
+<data name="DeleteConfirmation" xml:space="preserve">
+  <value>Are you sure you want to delete this category?</value>
+</data>
+  <!-- About Page -->
+  <data name="AboutUs" xml:space="preserve">
+    <value>About Us</value>
+  </data>
+  <data name="AboutUsSubtitle" xml:space="preserve">
+    <value>Discover our story and mission</value>
+  </data>
+  <data name="OurMission" xml:space="preserve">
+    <value>Our Mission</value>
+  </data>
+  <data name="OurMissionText" xml:space="preserve">
+    <value>To provide high-quality, engaging content that informs, educates, and inspires our readers.</value>
+  </data>
+  <data name="OurVision" xml:space="preserve">
+    <value>Our Vision</value>
+  </data>
+  <data name="OurVisionText" xml:space="preserve">
+    <value>To become the leading multilingual platform for sharing knowledge and fostering meaningful discussions.</value>
+  </data>
+  <data name="OurValues" xml:space="preserve">
+    <value>Our Values</value>
+  </data>
+  <data name="OurValuesText" xml:space="preserve">
+    <value>Integrity, diversity, innovation, and commitment to excellence guide everything we do.</value>
+  </data>
+  <data name="OurTeam" xml:space="preserve">
+    <value>Our Team</value>
+  </data>
+  <data name="TeamMember1Name" xml:space="preserve">
+    <value>John Smith</value>
+  </data>
+  <data name="TeamMember1Role" xml:space="preserve">
+    <value>Founder &amp; Editor-in-Chief</value>
+  </data>
+  <data name="TeamMember2Name" xml:space="preserve">
+    <value>Sarah Johnson</value>
+  </data>
+  <data name="TeamMember2Role" xml:space="preserve">
+    <value>Content Director</value>
+  </data>
+  <data name="TeamMember3Name" xml:space="preserve">
+    <value>Michael Chen</value>
+  </data>
+  <data name="TeamMember3Role" xml:space="preserve">
+    <value>Technical Lead</value>
+  </data>
+
+  <!-- Contact Page -->
+  <data name="ContactUs" xml:space="preserve">
+    <value>Contact Us</value>
+  </data>
+  <data name="ContactUsSubtitle" xml:space="preserve">
+    <value>Get in touch with our team</value>
+  </data>
+  <data name="SendMessage" xml:space="preserve">
+    <value>Send Message</value>
+  </data>
+  <data name="YourName" xml:space="preserve">
+    <value>Your Name</value>
+  </data>
+  <data name="YourEmail" xml:space="preserve">
+    <value>Your Email</value>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="GetInTouch" xml:space="preserve">
+    <value>Get in Touch</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="AddressText" xml:space="preserve">
+    <value>123 Blog Street, Digital City, 12345</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="PhoneText" xml:space="preserve">
+    <value>+1 (555) 123-4567</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="EmailText" xml:space="preserve">
+    <value>contact@yourblog.com</value>
+  </data>
+
+  <!-- Privacy Page -->
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="PrivacyPolicySubtitle" xml:space="preserve">
+    <value>How we protect and handle your information</value>
+  </data>
+  <data name="Introduction" xml:space="preserve">
+    <value>Introduction</value>
+  </data>
+  <data name="PrivacyIntroText" xml:space="preserve">
+    <value>We are committed to protecting your privacy and ensuring the security of your personal information. This privacy policy explains how we collect, use, and protect your data.</value>
+  </data>
+  <data name="InformationWeCollect" xml:space="preserve">
+    <value>Information We Collect</value>
+  </data>
+  <data name="PersonalInformation" xml:space="preserve">
+    <value>Personal Information</value>
+  </data>
+  <data name="PersonalInformationText" xml:space="preserve">
+    <value>We collect the following types of personal information:</value>
+  </data>
+  <data name="PersonalInfo1" xml:space="preserve">
+    <value>Name and contact information</value>
+  </data>
+  <data name="PersonalInfo2" xml:space="preserve">
+    <value>Account credentials</value>
+  </data>
+  <data name="PersonalInfo3" xml:space="preserve">
+    <value>Usage data and preferences</value>
+  </data>
+  <data name="PersonalInfo4" xml:space="preserve">
+    <value>Communication history</value>
+  </data>
+  <data name="HowWeUseInformation" xml:space="preserve">
+    <value>How We Use Information</value>
+  </data>
+  <data name="HowWeUseInformationText" xml:space="preserve">
+    <value>We use your information for the following purposes:</value>
+  </data>
+  <data name="UseInfo1" xml:space="preserve">
+    <value>To provide and improve our services</value>
+  </data>
+  <data name="UseInfo2" xml:space="preserve">
+    <value>To communicate with you</value>
+  </data>
+  <data name="UseInfo3" xml:space="preserve">
+    <value>To ensure security and prevent fraud</value>
+  </data>
+  <data name="UseInfo4" xml:space="preserve">
+    <value>To comply with legal obligations</value>
+  </data>
+  <data name="Cookies" xml:space="preserve">
+    <value>Cookies</value>
+  </data>
+  <data name="CookiesText" xml:space="preserve">
+    <value>We use cookies to enhance your browsing experience and analyze site traffic. You can control cookie settings through your browser preferences.</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="SecurityText" xml:space="preserve">
+    <value>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access or disclosure.</value>
+  </data>
+  <data name="YourRights" xml:space="preserve">
+    <value>Your Rights</value>
+  </data>
+  <data name="YourRightsText" xml:space="preserve">
+    <value>You have the following rights regarding your personal information:</value>
+  </data>
+  <data name="Rights1" xml:space="preserve">
+    <value>Right to access your personal data</value>
+  </data>
+  <data name="Rights2" xml:space="preserve">
+    <value>Right to request corrections</value>
+  </data>
+  <data name="Rights3" xml:space="preserve">
+    <value>Right to request deletion</value>
+  </data>
+  <data name="Rights4" xml:space="preserve">
+    <value>Right to withdraw consent</value>
+  </data>
+  <data name="PrivacyContactText" xml:space="preserve">
+    <value>If you have any questions about our privacy policy or how we handle your data, please contact us.</value>
+  </data>
+  <data name="LastUpdated" xml:space="preserve">
+    <value>Last Updated</value>
+  </data>
+  <!-- Post Management -->
+<data name="CreatePost" xml:space="preserve">
+  <value>Create Post</value>
+</data>
+<data name="EditPost" xml:space="preserve">
+  <value>Edit Post</value>
+</data>
+<data name="GoBack" xml:space="preserve">
+  <value>Go Back</value>
+</data>
+<data name="CreateNewPost" xml:space="preserve">
+  <value>Create New Post</value>
+</data>
+<data name="Title" xml:space="preserve">
+  <value>Title</value>
+</data>
+<data name="ShortDescription" xml:space="preserve">
+  <value>Short Description</value>
+</data>
+<data name="Description" xml:space="preserve">
+  <value>Description</value>
+</data>
+<data name="Category" xml:space="preserve">
+  <value>Category</value>
+</data>
+<data name="SelectCategory" xml:space="preserve">
+  <value>Select a Category</value>
+</data>
+<data name="Thumbnail" xml:space="preserve">
+  <value>Thumbnail</value>
+</data>
+<data name="Save" xml:space="preserve">
+  <value>Save</value>
+</data>
+<data name="PostCreatedSuccessfully" xml:space="preserve">
+  <value>Post created successfully</value>
+</data>
+<data name="PostUpdatedSuccessfully" xml:space="preserve">
+  <value>Post updated successfully</value>
+</data>
+<data name="PostNotFound" xml:space="preserve">
+  <value>Post not found</value>
+</data>
+</root>

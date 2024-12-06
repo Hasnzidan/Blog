@@ -1,0 +1,236 @@
+@model Blog.Models.Post
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn;
+    var currentUrl = $"{HttpContextAccessor.HttpContext?.Request.Scheme}://{HttpContextAccessor.HttpContext?.Request.Host}{HttpContextAccessor.HttpContext?.Request.Path}";
+}
+
+@section Styles {
+    <style>
+        .post-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #363636 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin: 20px 0;
+        }
+
+        .post-meta i {
+            margin-right: 0.5rem;
+        }
+
+        .post-meta span {
+            margin-right: 1.5rem;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .post-thumbnail {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .tag-badge {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 20px;
+            background-color: #e9ecef;
+            color: #495057;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+
+        .tag-badge:hover {
+            background-color: #dee2e6;
+            text-decoration: none;
+        }
+
+        .category-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background-color: #007bff;
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .category-badge:hover {
+            background-color: #0056b3;
+            text-decoration: none;
+            color: white;
+        }
+
+        .share-buttons {
+            margin: 40px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .share-buttons .btn {
+            margin-right: 10px;
+            border-radius: 20px;
+            padding: 8px 20px;
+        }
+
+        .post-navigation {
+            margin: 60px 0;
+            padding-top: 30px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid #007bff;
+            padding-left: 20px;
+            margin: 20px 0;
+            font-style: italic;
+            color: #6c757d;
+        }
+
+        @@media (max-width: 768px) {
+            .post-header {
+                padding: 40px 0;
+            }
+
+            .post-content {
+                font-size: 1rem;
+            }
+        }
+    </style>
+}
+
+<div class="post-header">
+    <div class="container">
+        <h1 class="display-4">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn)</h1>
+        @if (Model?.Category != null)
+        {
+            <a href="@Url.Action("Index", "Search", new { categoryId = Model.Category.Id })" class="category-badge">
+                <i class="fas fa-folder"></i> @(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.Category.NameAr : Model.Category.NameEn)
+            </a>
+        }
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            @if (!string.IsNullOrEmpty(Model?.ThumbnailUrl))
+            {
+                <img src="@Model.ThumbnailUrl" class="post-thumbnail" alt="@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn)">
+            }
+
+            <div class="post-meta">
+                <span><i class="fas fa-calendar"></i> @Model?.CreateDate.ToString("MMMM dd, yyyy")</span>
+                @if (Model?.PostTags != null && Model.PostTags.Any())
+                {
+                    <span>
+                        <i class="fas fa-tags"></i>
+                        @foreach (var postTag in Model.PostTags)
+                        {
+                            <a href="@Url.Action("Index", "Search", new { selectedTags = new[] { postTag.TagId } })" 
+                               class="tag-badge">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? postTag.Tag?.NameAr : postTag.Tag?.NameEn)</a>
+                        }
+                    </span>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model?.ShortDescriptionAr) || !string.IsNullOrEmpty(Model?.ShortDescriptionEn))
+            {
+                <div class="lead mb-4">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.ShortDescriptionAr : Model.ShortDescriptionEn)</div>
+            }
+
+            <div class="post-content">
+                @Html.Raw(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.DescriptionAr : Model.DescriptionEn)
+            </div>
+
+            <div class="share-buttons">
+                <h5 class="mb-3">Share this post</h5>
+                <a href="https://twitter.com/intent/tweet?text=@Uri.EscapeDataString(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn)&url=@Uri.EscapeDataString(currentUrl)" 
+                   target="_blank" class="btn btn-primary">
+                    <i class="fab fa-twitter"></i> Twitter
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=@Uri.EscapeDataString(currentUrl)" 
+                   target="_blank" class="btn btn-primary">
+                    <i class="fab fa-facebook"></i> Facebook
+                </a>
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Uri.EscapeDataString(currentUrl)&title=@Uri.EscapeDataString(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn)" 
+                   target="_blank" class="btn btn-primary">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a>
+            </div>
+
+            <div class="post-navigation">
+                <div class="row">
+                    <div class="col-6">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left"></i> Back to Home
+                        </a>
+                    </div>
+                    @if (User?.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="col-6 text-end">
+                            <a href="@Url.Action("Create", "Post")" class="btn btn-primary">
+                                <i class="fas fa-pen"></i> Write a Post
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Add copy link button functionality
+            $('.copy-link').click(function(e) {
+                e.preventDefault();
+                var dummy = document.createElement('input');
+                document.body.appendChild(dummy);
+                dummy.value = window.location.href;
+                dummy.select();
+                document.execCommand('copy');
+                document.body.removeChild(dummy);
+                
+                // Show copied message
+                $(this).tooltip('hide')
+                    .attr('data-original-title', 'Copied!')
+                    .tooltip('show');
+                
+                setTimeout(() => {
+                    $(this).tooltip('hide')
+                        .attr('data-original-title', 'Copy link');
+                }, 1000);
+            });
+
+            // Initialize tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}

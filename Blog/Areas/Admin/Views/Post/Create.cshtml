@@ -1,63 +1,178 @@
-﻿@model Blog.ViewModels.CreatePostVM
+@model Blog.ViewModels.CreatePostVM
+@using Microsoft.Extensions.Localization
+@using Blog.Resources
+@inject IStringLocalizer<SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Create Post";
-
+    ViewData["Title"] = @Localizer["CreatePost"];
 }
 
-
 <div class="container-fluid">
-    <a class="btn btn-primary mb-1" asp-action="Index" asp-controller="Post">Go Back</a>
-    <div class="card">
-        <div class="card-header bg-primary ">
-            <h4 class="card-title text-white">Create new Post</h4>
+    <a class="btn btn-primary mb-1" asp-action="Index" asp-controller="Post">@Localizer["GoBack"]</a>
+    <div class="card shadow">
+        <div class="card-header bg-primary">
+            <h4 class="card-title text-white">@Localizer["CreateNewPost"]</h4>
         </div>
         <div class="card-body">
             <form asp-action="Create" asp-controller="Post" asp-area="Admin" enctype="multipart/form-data">
-                <div class="row mb-2 ">
-                    <div class="col-9">
-                        <div class="mb-2">
-                            <label>Title</label>
-                            <input type="text" asp-for="Title" class="form-control" />
-                            <span asp-validation-for="Title" class="text-danger"></span>
-                        </div>
-                        <div class="mb-2">
-                            <label>ShortDescription</label>
-                            <input type="text" asp-for="ShortDescription" class="form-control" />
-                            <span asp-validation-for="ShortDescription" class="text-danger"></span>
-                        </div>
-                        <div class="mb-2">
-                            <label>Description</label>
-                            <textarea id="richEditor" asp-for="Description" class="custom-file" rows="8"></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["ArabicTitle"]</label>
+                            <input type="text" asp-for="TitleAr" class="form-control" />
+                            <span asp-validation-for="TitleAr" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-3">
-                        <div class="mb-2">
-                            <img src="~/Thumbnails/defaultthumbnail.jpg" class="img-fluid" id="thumbnail" />
-                        </div>
-                        <div class="mb-2">
-                            <label hidden>Thumbnail</label>
-                            <input type="file" asp-for="Thumbnail" class="custom-file" />
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["EnglishTitle"]</label>
+                            <input type="text" asp-for="TitleEn" class="form-control" />
+                            <span asp-validation-for="TitleEn" class="text-danger"></span>
                         </div>
                     </div>
-                </div>
-                <div class="mb-2">
-                    <button type="submit" class="btn btn-primary w-100 ">Save</button>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["ArabicShortDescription"]</label>
+                            <textarea asp-for="ShortDescriptionAr" class="form-control"></textarea>
+                            <span asp-validation-for="ShortDescriptionAr" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["EnglishShortDescription"]</label>
+                            <textarea asp-for="ShortDescriptionEn" class="form-control"></textarea>
+                            <span asp-validation-for="ShortDescriptionEn" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["ArabicDescription"]</label>
+                            <textarea id="richEditorAr" asp-for="DescriptionAr" class="form-control" rows="8"></textarea>
+                            <span asp-validation-for="DescriptionAr" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["EnglishDescription"]</label>
+                            <textarea id="richEditorEn" asp-for="DescriptionEn" class="form-control" rows="8"></textarea>
+                            <span asp-validation-for="DescriptionEn" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["Category"]</label>
+                            <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
+                                <option value="">@Localizer["SelectCategory"]</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["Tags"]</label>
+                            <select asp-for="SelectedTags" asp-items="ViewBag.Tags" class="form-select tags-select" multiple>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">@Localizer["Thumbnail"]</label>
+                    <img src="/Thumbnails/defaultthumbnail.jpg" class="img-fluid thumbnail-preview" id="thumbnail" alt="@Localizer["ThumbnailPreview"]" />
+                    <input type="file" asp-for="Thumbnail" class="form-control" accept="image/*" />
+                    <span asp-validation-for="Thumbnail" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-primary w-100">@Localizer["Save"]</button>
+                </div>
             </form>
         </div>
     </div>
 </div>
 
-@section Scripts{
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .thumbnail-preview {
+            max-height: 200px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+        }
+        .select2-container {
+            width: 100% !important;
+        }
+        .select2-container .select2-selection--multiple {
+            min-height: 38px;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            padding: 2px 8px;
+            margin: 4px;
+            border-radius: 4px;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: white;
+            margin-right: 5px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        $(".custom-file").on("change", function() {
+        $(document).ready(function() {
+            $('.tags-select').select2({
+                placeholder: "@Localizer["SelectTags"]",
+                allowClear: true,
+                theme: "classic"
+            });
+        });
+
+        $(".custom-file").on("change", function () {
             var fileName = $(this).val().split("\\").pop();
             $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
             document.getElementById('thumbnail').src = window.URL.createObjectURL(this.files[0])
+        });
+
+        tinymce.init({
+            selector: 'textarea#richEditorAr',
+            height: 300,
+            menubar: false,
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste code help wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+        });
+
+        tinymce.init({
+            selector: 'textarea#richEditorEn',
+            height: 300,
+            menubar: false,
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste code help wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
         });
     </script>
 }

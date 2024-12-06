@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Posts" xml:space="preserve">
+    <value>Posts</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="Latest Posts" xml:space="preserve">
+    <value>Latest Posts</value>
+  </data>
+  <data name="Latest Comments" xml:space="preserve">
+    <value>Latest Comments</value>
+  </data>
+  <data name="No posts found" xml:space="preserve">
+    <value>No posts found</value>
+  </data>
+  <data name="No comments found" xml:space="preserve">
+    <value>No comments found</value>
+  </data>
+</root>

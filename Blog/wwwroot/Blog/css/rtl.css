@@ -1,0 +1,155 @@
+/* RTL Support */
+body[dir="rtl"] {
+    text-align: right;
+}
+
+body[dir="rtl"] .navbar-nav {
+    padding-right: 0;
+}
+
+body[dir="rtl"] .dropdown-menu {
+    text-align: right;
+}
+
+body[dir="rtl"] .ms-auto {
+    margin-right: auto !important;
+    margin-left: 0 !important;
+}
+
+body[dir="rtl"] .me-auto {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
+
+body[dir="rtl"] .float-end {
+    float: left !important;
+}
+
+body[dir="rtl"] .float-start {
+    float: right !important;
+}
+
+/* Form Controls */
+body[dir="rtl"] .form-check {
+    padding-right: 1.5em;
+    padding-left: 0;
+}
+
+body[dir="rtl"] .form-check .form-check-input {
+    float: right;
+    margin-right: -1.5em;
+    margin-left: 0;
+}
+
+/* Input Groups */
+body[dir="rtl"] .input-group > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+    margin-right: -1px;
+    margin-left: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+}
+
+body[dir="rtl"] .input-group:not(.has-validation) > :not(:last-child):not(.dropdown-toggle):not(.dropdown-menu),
+body[dir="rtl"] .input-group:not(.has-validation) > .dropdown-toggle:nth-last-child(n+3) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+
+/* List Groups */
+body[dir="rtl"] .list-group {
+    padding-right: 0;
+}
+
+/* Cards */
+body[dir="rtl"] .card-header {
+    text-align: right;
+}
+
+/* Alerts */
+body[dir="rtl"] .alert-dismissible {
+    padding-right: 1rem;
+    padding-left: 3rem;
+}
+
+body[dir="rtl"] .alert-dismissible .btn-close {
+    left: 0;
+    right: auto;
+}
+
+/* Modal */
+body[dir="rtl"] .modal-header .btn-close {
+    margin: -0.5rem auto -0.5rem -0.5rem;
+}
+
+/* Pagination */
+body[dir="rtl"] .page-item:first-child .page-link {
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+body[dir="rtl"] .page-item:last-child .page-link {
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* Blog Specific Styles */
+body[dir="rtl"] .post-preview {
+    text-align: right;
+}
+
+body[dir="rtl"] .post-meta {
+    text-align: right;
+}
+
+body[dir="rtl"] .sidebar {
+    text-align: right;
+}
+
+body[dir="rtl"] .category-list {
+    padding-right: 0;
+}
+
+/* Font Awesome Icons */
+body[dir="rtl"] .fa-ul {
+    margin-right: 2.5em;
+    margin-left: 0;
+}
+
+body[dir="rtl"] .fa-li {
+    right: -2em;
+    left: auto;
+}
+
+/* Custom Styles */
+body[dir="rtl"] .navbar-brand {
+    margin-right: 0;
+    margin-left: 1rem;
+}
+
+body[dir="rtl"] .dropdown-toggle::after {
+    margin-right: 0.255em;
+    margin-left: 0;
+}
+
+/* Form Validation */
+body[dir="rtl"] .was-validated .form-control:valid,
+body[dir="rtl"] .form-control.is-valid {
+    padding-left: calc(1.5em + 0.75rem);
+    padding-right: 0.75rem;
+    background-position: left calc(0.375em + 0.1875rem) center;
+}
+
+body[dir="rtl"] .was-validated .form-control:invalid,
+body[dir="rtl"] .form-control.is-invalid {
+    padding-left: calc(1.5em + 0.75rem);
+    padding-right: 0.75rem;
+    background-position: left calc(0.375em + 0.1875rem) center;
+}

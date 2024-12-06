@@ -1,0 +1,95 @@
+@model IEnumerable<Blog.Models.Tag>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Blog.Resources.SharedResource> Localizer
+
+@{
+    ViewData["Title"] = Localizer["Tags"];
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="m-0">@Localizer["Tag Management"]</h6>
+        <a asp-action="Create" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> @Localizer["Create New Tag"]
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="tagsTable" class="table table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>@Localizer["Arabic Name"]</th>
+                        <th>@Localizer["English Name"]</th>
+                        <th>@Localizer["Posts Count"]</th>
+                        <th>@Localizer["Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td dir="rtl">@item.NameAr</td>
+                            <td>@item.NameEn</td>
+                            <td>@(item.PostTags?.Count ?? 0)</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline delete-form">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Initialize DataTables with language support
+            var table = $('#tagsTable').DataTable({
+                responsive: true,
+                language: {
+                    url: '@Url.Content($"~/lib/datatables/i18n/{Context.Request.Cookies["Language"]}.json")'
+                },
+                order: [[1, 'asc']], // Sort by English name by default
+                columnDefs: [
+                    {
+                        targets: -1,
+                        orderable: false,
+                        searchable: false
+                    }
+                ]
+            });
+
+            // Handle delete confirmation
+            $('.delete-form').on('submit', function (e) {
+                e.preventDefault();
+                var form = $(this);
+                
+                Swal.fire({
+                    title: '@Localizer["Are you sure?"]',
+                    text: '@Localizer["You won\'t be able to revert this!"]',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '@Localizer["Yes, delete it!"]',
+                    cancelButtonText: '@Localizer["Cancel"]'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.off('submit').submit();
+                    }
+                });
+            });
+        });
+    </script>
+}
