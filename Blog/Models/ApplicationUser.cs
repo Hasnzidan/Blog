@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
+using System.Collections.Generic; // Added this line
 
 namespace Blog.Models
 {
@@ -8,6 +9,7 @@ namespace Blog.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
 
-        public List<Post>? Posts { get; set; }
+        // Navigation property for Posts
+        public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
     }
 }
