@@ -1,4 +1,4 @@
-﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Blog.Data;
 using Blog.ViewModels;
 using Blog.Models;
@@ -7,158 +7,319 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-namespace FineBlog.Areas.Admin.Controllers
+namespace Blog.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
     public class PageController : Controller
     {
         private readonly ApplicationDbContext _context;
-        public INotyfService _notification { get; }
+        private readonly INotyfService _notification;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger<PageController> _logger;
 
         public PageController(ApplicationDbContext context,
-                                INotyfService notification,
-                                IWebHostEnvironment webHostEnvironment)
+                            INotyfService notification,
+                            IWebHostEnvironment webHostEnvironment,
+                            ILogger<PageController> logger)
         {
-            _context = context;
-            _notification = notification;
-            _webHostEnvironment = webHostEnvironment;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _notification = notification ?? throw new ArgumentNullException(nameof(notification));
+            _webHostEnvironment = webHostEnvironment ?? throw new ArgumentNullException(nameof(webHostEnvironment));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet]
         public async Task<IActionResult> About()
         {
-            var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "About-Us");
-            var vm = new PageVM()
+            try
             {
-                Id = page!.Id,
-                Title = page.Title,
-                shortDescription = page.ShortDescription,
-                Description = page.Description,
-                ThumbnailUrl = page.ThumbnailUrl,
-            };
-            return View(vm);
+                var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "about");
+                if (page == null)
+                {
+                    _logger.LogWarning("About page not found");
+                    _notification.Error("About page not found");
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var vm = new PageVM()
+                {
+                    Id = page.Id,
+                    Title = page.Title ?? string.Empty,
+                    ShortDescription = page.ShortDescription ?? string.Empty,
+                    Content = page.Content ?? string.Empty,
+                    ThumbnailUrl = page.ThumbnailUrl ?? string.Empty,
+                    Published = page.Published,
+                    CreatedDate = page.CreatedDate,
+                    Slug = page.Slug ?? string.Empty
+                };
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching about page");
+                _notification.Error("An error occurred while fetching the about page");
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> About(PageVM vm)
         {
-            if (!ModelState.IsValid) { return View(vm); }
-            var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "About-Us");
-            if (page == null)
+            try
             {
-                _notification.Error("Page not found");
-                return View();
-            }
-            page.Title = vm.Title;
-            page.ShortDescription = vm.shortDescription;
-            page.Description = vm.Description;
+                if (!ModelState.IsValid) 
+                { 
+                    _notification.Error("Please fix the validation errors");
+                    return View(vm); 
+                }
 
-            if (vm.Thumbnail != null)
+                if (vm == null)
+                {
+                    _logger.LogWarning("Invalid form submission for about page");
+                    _notification.Error("Invalid form submission");
+                    return RedirectToAction("About");
+                }
+
+                var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "about");
+                if (page == null)
+                {
+                    _logger.LogWarning("About page not found for update");
+                    _notification.Error("Page not found");
+                    return View(vm);
+                }
+
+                page.Title = vm.Title ?? string.Empty;
+                page.ShortDescription = vm.ShortDescription ?? string.Empty;
+                page.Content = vm.Content ?? string.Empty;
+
+                if (vm.Thumbnail != null)
+                {
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    string fileName = Path.GetFileNameWithoutExtension(vm.Thumbnail.FileName);
+                    string extension = Path.GetExtension(vm.Thumbnail.FileName);
+                    
+                    if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(extension))
+                    {
+                        fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                        string path = Path.Combine(wwwRootPath, "thumbnails", fileName);
+
+                        using (var fileStream = new FileStream(path, FileMode.Create))
+                        {
+                            await vm.Thumbnail.CopyToAsync(fileStream);
+                        }
+
+                        page.ThumbnailUrl = "/thumbnails/" + fileName;
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("About page updated successfully");
+                _notification.Success("Page updated successfully");
+                return RedirectToAction("About", "Page", new { area = "Admin" });
+            }
+            catch (Exception ex)
             {
-                page.ThumbnailUrl = UploadImage(vm.Thumbnail);
+                _logger.LogError(ex, "Error occurred while updating about page");
+                _notification.Error("An error occurred while updating the about page");
+                return RedirectToAction("About");
             }
-
-            await _context.SaveChangesAsync();
-            _notification.Success("About page updated succesfully");
-            return RedirectToAction("About", "Page", new { area = "Admin" });
         }
 
         [HttpGet]
         public async Task<IActionResult> Contact()
         {
-            var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "Contact-Us");
-            var vm = new PageVM()
+            try
             {
-                Id = page!.Id,
-                Title = page.Title,
-                shortDescription = page.ShortDescription,
-                Description = page.Description,
-                ThumbnailUrl = page.ThumbnailUrl,
-            };
-            return View(vm);
+                var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "contact");
+                if (page == null)
+                {
+                    _logger.LogWarning("Contact page not found");
+                    _notification.Error("Contact page not found");
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var vm = new PageVM()
+                {
+                    Id = page.Id,
+                    Title = page.Title ?? string.Empty,
+                    ShortDescription = page.ShortDescription ?? string.Empty,
+                    Content = page.Content ?? string.Empty,
+                    ThumbnailUrl = page.ThumbnailUrl ?? string.Empty,
+                    Published = page.Published,
+                    CreatedDate = page.CreatedDate,
+                    Slug = page.Slug ?? string.Empty
+                };
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching contact page");
+                _notification.Error("An error occurred while fetching the contact page");
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Contact(PageVM vm)
         {
-            if (!ModelState.IsValid) { return View(vm); }
-            var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "Contact-Us");
-            if (page == null)
+            try
             {
-                _notification.Error("Page not found");
-                return View();
-            }
-            page.Title = vm.Title;
-            page.ShortDescription = vm.shortDescription;
-            page.Description = vm.Description;
+                if (!ModelState.IsValid) 
+                { 
+                    _notification.Error("Please fix the validation errors");
+                    return View(vm); 
+                }
 
-            if (vm.Thumbnail != null)
+                if (vm == null)
+                {
+                    _logger.LogWarning("Invalid form submission for contact page");
+                    _notification.Error("Invalid form submission");
+                    return RedirectToAction("Contact");
+                }
+
+                var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "contact");
+                if (page == null)
+                {
+                    _logger.LogWarning("Contact page not found for update");
+                    _notification.Error("Page not found");
+                    return View(vm);
+                }
+
+                page.Title = vm.Title ?? string.Empty;
+                page.ShortDescription = vm.ShortDescription ?? string.Empty;
+                page.Content = vm.Content ?? string.Empty;
+
+                if (vm.Thumbnail != null)
+                {
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    string fileName = Path.GetFileNameWithoutExtension(vm.Thumbnail.FileName);
+                    string extension = Path.GetExtension(vm.Thumbnail.FileName);
+                    
+                    if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(extension))
+                    {
+                        fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                        string path = Path.Combine(wwwRootPath, "thumbnails", fileName);
+
+                        using (var fileStream = new FileStream(path, FileMode.Create))
+                        {
+                            await vm.Thumbnail.CopyToAsync(fileStream);
+                        }
+
+                        page.ThumbnailUrl = "/thumbnails/" + fileName;
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Contact page updated successfully");
+                _notification.Success("Page updated successfully");
+                return RedirectToAction("Contact", "Page", new { area = "Admin" });
+            }
+            catch (Exception ex)
             {
-                page.ThumbnailUrl = UploadImage(vm.Thumbnail);
+                _logger.LogError(ex, "Error occurred while updating contact page");
+                _notification.Error("An error occurred while updating the contact page");
+                return RedirectToAction("Contact");
             }
-
-            await _context.SaveChangesAsync();
-            _notification.Success("Contact page updated succesfully");
-            return RedirectToAction("Contact", "Page", new { area = "Admin" });
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Privacy()
         {
-            var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "privacy");
-            var vm = new PageVM()
+            try
             {
-                Id = page!.Id,
-                Title = page.Title,
-                shortDescription = page.ShortDescription,
-                Description = page.Description,
-                ThumbnailUrl = page.ThumbnailUrl,
-            };
-            return View(vm);
+                var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "privacy-policy");
+                if (page == null)
+                {
+                    _logger.LogWarning("Privacy policy page not found");
+                    _notification.Error("Privacy policy page not found");
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var vm = new PageVM()
+                {
+                    Id = page.Id,
+                    Title = page.Title ?? string.Empty,
+                    ShortDescription = page.ShortDescription ?? string.Empty,
+                    Content = page.Content ?? string.Empty,
+                    ThumbnailUrl = page.ThumbnailUrl ?? string.Empty,
+                    Published = page.Published,
+                    CreatedDate = page.CreatedDate,
+                    Slug = page.Slug ?? string.Empty
+                };
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching privacy policy page");
+                _notification.Error("An error occurred while fetching the privacy policy page");
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Privacy(PageVM vm)
         {
-            if (!ModelState.IsValid) { return View(vm); }
-            var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "privacy");
-            if (page == null)
+            try
             {
-                _notification.Error("Page not found");
-                return View();
-            }
-            page.Title = vm.Title;
-            page.ShortDescription = vm.shortDescription;
-            page.Description = vm.Description;
+                if (!ModelState.IsValid) 
+                { 
+                    _notification.Error("Please fix the validation errors");
+                    return View(vm); 
+                }
 
-            if (vm.Thumbnail != null)
+                if (vm == null)
+                {
+                    _logger.LogWarning("Invalid form submission for privacy policy page");
+                    _notification.Error("Invalid form submission");
+                    return RedirectToAction("Privacy");
+                }
+
+                var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "privacy-policy");
+                if (page == null)
+                {
+                    _logger.LogWarning("Privacy policy page not found for update");
+                    _notification.Error("Page not found");
+                    return View(vm);
+                }
+
+                page.Title = vm.Title ?? string.Empty;
+                page.ShortDescription = vm.ShortDescription ?? string.Empty;
+                page.Content = vm.Content ?? string.Empty;
+
+                if (vm.Thumbnail != null)
+                {
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    string fileName = Path.GetFileNameWithoutExtension(vm.Thumbnail.FileName);
+                    string extension = Path.GetExtension(vm.Thumbnail.FileName);
+                    
+                    if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(extension))
+                    {
+                        fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                        string path = Path.Combine(wwwRootPath, "thumbnails", fileName);
+
+                        using (var fileStream = new FileStream(path, FileMode.Create))
+                        {
+                            await vm.Thumbnail.CopyToAsync(fileStream);
+                        }
+
+                        page.ThumbnailUrl = "/thumbnails/" + fileName;
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Privacy policy page updated successfully");
+                _notification.Success("Page updated successfully");
+                return RedirectToAction("Privacy", "Page", new { area = "Admin" });
+            }
+            catch (Exception ex)
             {
-                page.ThumbnailUrl = UploadImage(vm.Thumbnail);
+                _logger.LogError(ex, "Error occurred while updating privacy policy page");
+                _notification.Error("An error occurred while updating the privacy policy page");
+                return RedirectToAction("Privacy");
             }
-
-            await _context.SaveChangesAsync();
-            _notification.Success("Privacy page updated succesfully");
-            return RedirectToAction("Privacy", "Page", new { area = "Admin" });
         }
-
-
-
-        private string UploadImage(IFormFile file)
-        {
-            string uniqueFileName = "";
-            var folderPath = Path.Combine(_webHostEnvironment.WebRootPath, "thumbnails");
-            uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-            var filePath = Path.Combine(folderPath, uniqueFileName);
-            using (FileStream fileStream = System.IO.File.Create(filePath))
-            {
-                file.CopyTo(fileStream);
-            }
-            return uniqueFileName;
-        }
-
     }
 }

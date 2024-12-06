@@ -14,15 +14,16 @@ namespace Blog.Areas.Admin.Controllers
     public class SettingController : Controller
     {
         private readonly ApplicationDbContext _context;
-        public INotyfService _notification { get; }
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public SettingController(ApplicationDbContext context,
+        public INotyfService _notification { get; }
+        public SettingController(
+            ApplicationDbContext context,
             INotyfService notyfService,
             IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
-            _notification = notyfService;
             _webHostEnvironment = webHostEnvironment;
+            _notification = notyfService;
         }
         [HttpGet]
         public async Task<IActionResult> Index()

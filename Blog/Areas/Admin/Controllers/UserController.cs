@@ -1,4 +1,4 @@
-﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Blog.Models;
 using Blog.Utilites;
 using Blog.ViewModels;
@@ -70,7 +70,7 @@ namespace Blog.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordVM vm)
         {
-            if (!ModelState.IsValid)  { return View(vm); }
+            if (!ModelState.IsValid) { return View(vm); }
             var existinguser = await _userManager.FindByIdAsync(vm.Id);
             if (existinguser == null)
             {
@@ -79,14 +79,17 @@ namespace Blog.Areas.Admin.Controllers
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(existinguser);
             var result = await _userManager.ResetPasswordAsync(existinguser, token, vm.NewPassword);
-            if (!result.Succeeded)
+            if (result.Succeeded)
             {
-                _notification.Success("Password Reset Seccessfully");
-               return RedirectToAction(nameof(Index));
+                _notification.Success("Password Reset Successfully");
+                return RedirectToAction(nameof(Index));
+            }
+            
+            foreach (var error in result.Errors)
+            {
+                _notification.Error(error.Description);
             }
             return View(vm);
-          
-            
         }
 
         [Authorize(Roles ="Admin")]
@@ -127,7 +130,7 @@ namespace Blog.Areas.Admin.Controllers
             var result = await _userManager.CreateAsync(user, vm.Password);
             if (result.Succeeded)
             {
-                if (vm.IsAdmin)
+                if (vm.Role == "Admin")
                 {
                     await _userManager.AddToRoleAsync(user, WebsiteRoles.WebsiteAdmin);
                 }
@@ -142,50 +145,55 @@ namespace Blog.Areas.Admin.Controllers
             return View(vm);
         }
 
-        [HttpGet("Login")]
+        [HttpGet]
         public IActionResult Login()
         {
-            if (!HttpContext.User.Identity!.IsAuthenticated)
+            if (User.Identity!.IsAuthenticated)
             {
-                return View(new LoginVM());
+                return RedirectToAction("Index", "Post", new { area = "Admin" });
             }
-            return RedirectToAction("Index","Post", new {area = "Admin"});
+            return View(new LoginVM());
         }
 
-        [HttpPost("Login")]
-        public async Task <IActionResult> Login(LoginVM vm) 
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginVM vm)
         {
-           
-            if (!ModelState.IsValid) { return View(vm); }
-            var existingUser = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == vm.UserName);
-            if (existingUser == null) {
-                _notification.Error("Username does not exist");
-                return View(vm);
-            }
-            var verifyPassword = await _userManager.CheckPasswordAsync(existingUser,vm.Password);
-            if (!verifyPassword)
+            if (!ModelState.IsValid)
             {
-                _notification.Error("Password does not match");
-
+                _notification.Error("Please fill in all required fields!");
                 return View(vm);
             }
-           await _signInManager.PasswordSignInAsync(vm.UserName, vm.Password, vm.RememberM, true);
-            _notification.Success("success Login");
-            return RedirectToAction("Index","Post",new {area = "Admin"});
+
+            var result = await _signInManager.PasswordSignInAsync(vm.UserName, vm.Password, vm.RememberMe, lockoutOnFailure: true);
+            if (result.Succeeded)
+            {
+                _notification.Success("Login successful");
+                return RedirectToAction("Index", "Post", new { area = "Admin" });
+            }
+            
+            if (result.IsLockedOut)
+            {
+                _notification.Warning("Account locked. Please try again later.");
+                return View(vm);
+            }
+            
+            _notification.Error("Invalid login attempt. Please check your username and password.");
+            return View(vm);
         }
+
         [HttpPost]
         [Authorize]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
             _notification.Success("You are logged out successfully");
-            return RedirectToAction("Index","Home", new {area =""});
+            return RedirectToAction("Login");
         }
         [HttpGet("AccessDenied")]
         [Authorize]
         public IActionResult AccessDenied()
         {
-            return View();
+            return RedirectToAction("AccessDenied", "Account", new { area = "" });
         }
 
     }
