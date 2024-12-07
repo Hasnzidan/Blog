@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 using Blog.Models;
+using System.Collections.Generic;
 
 namespace Blog.ViewModels
 {
@@ -10,27 +11,27 @@ namespace Blog.ViewModels
 
         [Required(ErrorMessage = "Arabic title is required")]
         [Display(Name = "Arabic Title")]
-        public string TitleAr { get; set; } = string.Empty;
+        public string? TitleAr { get; set; }
 
         [Required(ErrorMessage = "English title is required")]
         [Display(Name = "English Title")]
-        public string TitleEn { get; set; } = string.Empty;
+        public string? TitleEn { get; set; }
 
         [Required(ErrorMessage = "Arabic short description is required")]
         [Display(Name = "Arabic Short Description")]
-        public string ShortDescriptionAr { get; set; } = string.Empty;
+        public string? ShortDescriptionAr { get; set; }
 
         [Required(ErrorMessage = "English short description is required")]
         [Display(Name = "English Short Description")]
-        public string ShortDescriptionEn { get; set; } = string.Empty;
+        public string? ShortDescriptionEn { get; set; }
 
         [Required(ErrorMessage = "Arabic description is required")]
         [Display(Name = "Arabic Description")]
-        public string DescriptionAr { get; set; } = string.Empty;
+        public string? DescriptionAr { get; set; }
 
         [Required(ErrorMessage = "English description is required")]
         [Display(Name = "English Description")]
-        public string DescriptionEn { get; set; } = string.Empty;
+        public string? DescriptionEn { get; set; }
 
         [Required(ErrorMessage = "Category is required")]
         [Display(Name = "Category")]
@@ -40,7 +41,5 @@ namespace Blog.ViewModels
         public string? ThumbnailUrl { get; set; }
 
         public List<Category>? Categories { get; set; }
-        public List<Tag>? Tags { get; set; }
-        public List<int> SelectedTags { get; set; } = new();
     }
 }

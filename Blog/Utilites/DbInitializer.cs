@@ -54,36 +54,108 @@ namespace Blog.Utilites
                     var result = await _userManager.CreateAsync(admin, "Admin123*");
                     if (result.Succeeded)
                     {
-                        if (await _roleManager.RoleExistsAsync("Admin"))
-                        {
-                            await _userManager.AddToRoleAsync(admin, "Admin");
-                        }
+                        await _userManager.AddToRoleAsync(admin, "Admin");
                     }
-                    else
+                }
+
+                // Add test categories if none exist
+                if (!_context.Categories.Any())
+                {
+                    var categories = new List<Category>
                     {
-                        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                        throw new InvalidOperationException($"Failed to create admin user: {errors}");
+                        new Category
+                        {
+                            NameEn = "Technology",
+                            NameAr = "التكنولوجيا",
+                            DescriptionEn = "Latest in tech",
+                            DescriptionAr = "أحدث التقنيات",
+                            Slug = "technology"
+                        },
+                        new Category
+                        {
+                            NameEn = "Travel",
+                            NameAr = "السفر",
+                            DescriptionEn = "Travel experiences",
+                            DescriptionAr = "تجارب السفر",
+                            Slug = "travel"
+                        }
+                    };
+
+                    await _context.Categories.AddRangeAsync(categories);
+                    await _context.SaveChangesAsync();
+                }
+
+                // Add test posts if none exist
+                if (!_context.Posts.Any())
+                {
+                    var category = await _context.Categories.FirstOrDefaultAsync();
+                    var admin = await _userManager.FindByEmailAsync("admin@gmail.com");
+
+                    if (category != null && admin != null)
+                    {
+                        var posts = new List<Post>
+                        {
+                            new Post
+                            {
+                                TitleEn = "Welcome to Our Blog",
+                                TitleAr = "مرحباً بكم في مدونتنا",
+                                ShortDescriptionEn = "This is our first multilingual blog post",
+                                ShortDescriptionAr = "هذه أول تدوينة متعددة اللغات",
+                                ContentEn = "Welcome to our multilingual blog! We're excited to share content in both English and Arabic.",
+                                ContentAr = "مرحباً بكم في مدونتنا متعددة اللغات! نحن متحمسون لمشاركة المحتوى باللغتين الإنجليزية والعربية.",
+                                DescriptionEn = "Welcome to our multilingual blog! We're excited to share content in both English and Arabic.",
+                                DescriptionAr = "مرحباً بكم في مدونتنا متعددة اللغات! نحن متحمسون لمشاركة المحتوى باللغتين الإنجليزية والعربية.",
+                                Slug = "welcome-post",
+                                CategoryId = category.Id,
+                                ApplicationUserId = admin.Id,
+                                CreateDate = DateTime.Now,
+                                LastModifiedDate = DateTime.Now,
+                                IsPublished = true
+                            },
+                            new Post
+                            {
+                                TitleEn = "Getting Started with ASP.NET Core",
+                                TitleAr = "البدء مع ASP.NET Core",
+                                ShortDescriptionEn = "Learn the basics of ASP.NET Core",
+                                ShortDescriptionAr = "تعلم أساسيات ASP.NET Core",
+                                ContentEn = "ASP.NET Core is a cross-platform framework for building modern web applications.",
+                                ContentAr = "ASP.NET Core هو إطار عمل متعدد المنصات لبناء تطبيقات الويب الحديثة.",
+                                DescriptionEn = "ASP.NET Core is a cross-platform framework for building modern web applications.",
+                                DescriptionAr = "ASP.NET Core هو إطار عمل متعدد المنصات لبناء تطبيقات الويب الحديثة.",
+                                Slug = "aspnet-core-basics",
+                                CategoryId = category.Id,
+                                ApplicationUserId = admin.Id,
+                                CreateDate = DateTime.Now,
+                                LastModifiedDate = DateTime.Now,
+                                IsPublished = true
+                            }
+                        };
+
+                        await _context.Posts.AddRangeAsync(posts);
+                        await _context.SaveChangesAsync();
                     }
                 }
 
                 if (!_context.Pages!.Any())
                 {
-                    var aboutPage = new Page
+                    var page = new Page
                     {
-                        Title = "About Us",
-                        Slug = "about-us",
-                        Content = "Welcome to our blog! This is the about page.",
-                        CreatedDate = DateTime.Now,
-                        Published = true
+                        TitleEn = "About Us",
+                        TitleAr = "من نحن",
+                        Slug = "about",
+                        ContentEn = "This is the about us page content.",
+                        ContentAr = "هذا هو محتوى صفحة من نحن",
+                        Published = true,
+                        CreatedDate = DateTime.Now
                     };
 
-                    await _context.Pages!.AddAsync(aboutPage);
+                    await _context.Pages!.AddAsync(page);
                     await _context.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Failed to initialize database", ex);
+                throw new Exception("An error occurred while seeding the database.", ex);
             }
         }
     }

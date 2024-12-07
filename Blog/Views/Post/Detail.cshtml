@@ -2,8 +2,8 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 @{
-    ViewData["Title"] = System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn;
-    var currentUrl = $"{HttpContextAccessor.HttpContext?.Request.Scheme}://{HttpContextAccessor.HttpContext?.Request.Host}{HttpContextAccessor.HttpContext?.Request.Path}";
+    ViewData["Title"] = System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model?.TitleAr ?? string.Empty : Model?.TitleEn ?? string.Empty;
+    var currentUrl = $"{HttpContextAccessor.HttpContext?.Request.Scheme ?? "https"}://{HttpContextAccessor.HttpContext?.Request.Host.Value ?? "localhost"}{HttpContextAccessor.HttpContext?.Request.Path ?? ""}";
 }
 
 @section Styles {
@@ -50,23 +50,6 @@
             border-radius: 12px;
             margin-bottom: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .tag-badge {
-            font-size: 0.85rem;
-            padding: 0.4rem 0.8rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-            border-radius: 20px;
-            background-color: #e9ecef;
-            color: #495057;
-            display: inline-block;
-            transition: background-color 0.2s;
-        }
-
-        .tag-badge:hover {
-            background-color: #dee2e6;
-            text-decoration: none;
         }
 
         .category-badge {
@@ -126,11 +109,11 @@
 
 <div class="post-header">
     <div class="container">
-        <h1 class="display-4">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn)</h1>
+        <h1 class="display-4">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model?.TitleAr ?? string.Empty : Model?.TitleEn ?? string.Empty)</h1>
         @if (Model?.Category != null)
         {
             <a href="@Url.Action("Index", "Search", new { categoryId = Model.Category.Id })" class="category-badge">
-                <i class="fas fa-folder"></i> @(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.Category.NameAr : Model.Category.NameEn)
+                <i class="fas fa-folder"></i> @(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.Category.NameAr ?? string.Empty : Model.Category.NameEn ?? string.Empty)
             </a>
         }
     </div>
@@ -141,36 +124,25 @@
         <div class="col-lg-8 mx-auto">
             @if (!string.IsNullOrEmpty(Model?.ThumbnailUrl))
             {
-                <img src="@Model.ThumbnailUrl" class="post-thumbnail" alt="@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn)">
+                <img src="@Model.ThumbnailUrl" class="post-thumbnail" alt="@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr ?? string.Empty : Model.TitleEn ?? string.Empty)">
             }
 
             <div class="post-meta">
-                <span><i class="fas fa-calendar"></i> @Model?.CreateDate.ToString("MMMM dd, yyyy")</span>
-                @if (Model?.PostTags != null && Model.PostTags.Any())
-                {
-                    <span>
-                        <i class="fas fa-tags"></i>
-                        @foreach (var postTag in Model.PostTags)
-                        {
-                            <a href="@Url.Action("Index", "Search", new { selectedTags = new[] { postTag.TagId } })" 
-                               class="tag-badge">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? postTag.Tag?.NameAr : postTag.Tag?.NameEn)</a>
-                        }
-                    </span>
-                }
+                <span><i class="fas fa-calendar"></i> @(Model?.CreateDate.ToString("MMMM dd, yyyy") ?? "N/A")</span>
             </div>
 
             @if (!string.IsNullOrEmpty(Model?.ShortDescriptionAr) || !string.IsNullOrEmpty(Model?.ShortDescriptionEn))
             {
-                <div class="lead mb-4">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.ShortDescriptionAr : Model.ShortDescriptionEn)</div>
+                <div class="lead mb-4">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model?.ShortDescriptionAr ?? string.Empty : Model?.ShortDescriptionEn ?? string.Empty)</div>
             }
 
             <div class="post-content">
-                @Html.Raw(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.DescriptionAr : Model.DescriptionEn)
+                @Html.Raw(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model?.DescriptionAr ?? string.Empty : Model?.DescriptionEn ?? string.Empty)
             </div>
 
             <div class="share-buttons">
                 <h5 class="mb-3">Share this post</h5>
-                <a href="https://twitter.com/intent/tweet?text=@Uri.EscapeDataString(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn)&url=@Uri.EscapeDataString(currentUrl)" 
+                <a href="https://twitter.com/intent/tweet?text=@Uri.EscapeDataString(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model?.TitleAr ?? string.Empty : Model?.TitleEn ?? string.Empty)&url=@Uri.EscapeDataString(currentUrl)"
                    target="_blank" class="btn btn-primary">
                     <i class="fab fa-twitter"></i> Twitter
                 </a>
@@ -178,7 +150,7 @@
                    target="_blank" class="btn btn-primary">
                     <i class="fab fa-facebook"></i> Facebook
                 </a>
-                <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Uri.EscapeDataString(currentUrl)&title=@Uri.EscapeDataString(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.TitleAr : Model.TitleEn)" 
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Uri.EscapeDataString(currentUrl)&title=@Uri.EscapeDataString(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model?.TitleAr ?? string.Empty : Model?.TitleEn ?? string.Empty)" 
                    target="_blank" class="btn btn-primary">
                     <i class="fab fa-linkedin"></i> LinkedIn
                 </a>

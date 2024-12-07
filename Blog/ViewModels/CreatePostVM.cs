@@ -32,6 +32,14 @@ namespace Blog.ViewModels
         [Required(ErrorMessage = "English description is required")]
         [Display(Name = "English Description")]
         public string DescriptionEn { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Arabic content is required")]
+        [Display(Name = "Arabic Content")]
+        public string ContentAr { get; set; } = string.Empty;
+        
+        [Required(ErrorMessage = "English content is required")]
+        [Display(Name = "English Content")]
+        public string ContentEn { get; set; } = string.Empty;
         
         public string? ApplicationUserId { get; set; }
         
@@ -43,9 +51,8 @@ namespace Blog.ViewModels
         [Display(Name = "Category")]
         public int CategoryId { get; set; }
 
-        public int[]? SelectedTags { get; set; }
+        public string Slug { get; set; } = string.Empty;
 
         public List<Category>? Categories { get; set; }
-        public List<Tag>? Tags { get; set; }
     }
 }

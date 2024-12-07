@@ -1,179 +1,127 @@
 using Blog.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Blog.Data
 {
-    public class DbSeeder
+    public static class DbSeeder
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly ILogger<DbSeeder> _logger;
-
-        public DbSeeder(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<DbSeeder> logger)
+        public static async Task SeedDefaultData(IServiceProvider service)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            _roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            var userMgr = service.GetRequiredService<UserManager<IdentityUser>>();
+            var roleMgr = service.GetRequiredService<RoleManager<IdentityRole>>();
+            var context = service.GetRequiredService<ApplicationDbContext>();
+
+            // Seed Roles
+            await SeedRoles(roleMgr);
+
+            // Seed Admin User
+            await SeedAdminUser(userMgr);
+
+            // Seed Categories
+            await SeedCategories(context);
+
+            // Seed Settings
+            await SeedSettings(context);
+
+            // Seed Sample Posts
+            await SeedSamplePosts(context, userMgr);
         }
 
-        public async Task SeedAsync()
+        private static async Task SeedRoles(RoleManager<IdentityRole> roleMgr)
         {
-            try
+            if (!await roleMgr.RoleExistsAsync("Admin"))
             {
-                await _context.Database.MigrateAsync();
-
-                if (_context.Categories != null && !await _context.Categories.AnyAsync())
-                {
-                    _logger.LogInformation("Seeding categories...");
-                    await SeedCategoriesAsync();
-                }
-
-                if (_context.Posts != null && !await _context.Posts.AnyAsync())
-                {
-                    _logger.LogInformation("Seeding posts...");
-                    await SeedPostsAsync();
-                }
-
-                await _context.SaveChangesAsync();
-                _logger.LogInformation("Database seeding completed successfully");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while seeding the database");
-                throw;
+                var role = new IdentityRole("Admin");
+                await roleMgr.CreateAsync(role);
             }
         }
 
-        private async Task SeedCategoriesAsync()
+        private static async Task SeedAdminUser(UserManager<IdentityUser> userMgr)
         {
-            var categories = new List<Category>
+            if (await userMgr.FindByEmailAsync("admin@blog.com") == null)
             {
-                new Category
+                var user = new IdentityUser
                 {
-                    NameAr = "تكنولوجيا",
-                    NameEn = "Technology",
-                    Slug = "technology",
-                    Description = "Technology articles"
-                },
-                new Category
-                {
-                    NameAr = "برمجة",
-                    NameEn = "Programming",
-                    Slug = "programming",
-                    Description = "Programming articles"
-                },
-                new Category
-                {
-                    NameAr = "تطوير الذات",
-                    NameEn = "Self Development",
-                    Slug = "self-development",
-                    Description = "Self development articles"
-                },
-                new Category
-                {
-                    NameAr = "ريادة الأعمال",
-                    NameEn = "Entrepreneurship",
-                    Slug = "entrepreneurship",
-                    Description = "Entrepreneurship articles"
-                },
-                new Category
-                {
-                    NameAr = "علوم",
-                    NameEn = "Science",
-                    Slug = "science",
-                    Description = "Science articles"
-                }
-            };
+                    UserName = "admin@blog.com",
+                    Email = "admin@blog.com",
+                    EmailConfirmed = true
+                };
 
-            await _context.Categories!.AddRangeAsync(categories);
-            await _context.SaveChangesAsync();
-        }
-
-        private async Task SeedPostsAsync()
-        {
-            if (_context.Categories == null) return;
-            
-            var author = new ApplicationUser
-            {
-                UserName = "author",
-                Email = "author@example.com",
-                FirstName = "أحمد",
-                LastName = "محمد",
-                EmailConfirmed = true
-            };
-
-            var existingAuthor = await _userManager.FindByEmailAsync(author.Email);
-            if (existingAuthor == null)
-            {
-                var result = await _userManager.CreateAsync(author, "Author@123");
+                var result = await userMgr.CreateAsync(user, "Admin@123");
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(author, "Author");
+                    await userMgr.AddToRoleAsync(user, "Admin");
                 }
             }
+        }
 
-            var posts = new List<Post>
+        private static async Task SeedCategories(ApplicationDbContext context)
+        {
+            if (!await context.Categories.AnyAsync())
             {
-                new Post
+                var categories = new List<Category>
                 {
-                    TitleAr = "مقدمة في الذكاء الاصطناعي",
-                    TitleEn = "Introduction to AI",
-                    ShortDescriptionAr = "مقدمة في الذكاء الاصطناعي وتطبيقاته",
-                    ShortDescriptionEn = "Introduction to AI and its applications",
-                    DescriptionAr = "الذكاء الاصطناعي هو أحد أهم التقنيات التي تشكل مستقبلنا. في هذا المقال، سنتعرف على المفاهيم الأساسية للذكاء الاصطناعي وكيف يؤثر على حياتنا اليومية...",
-                    DescriptionEn = "Artificial Intelligence is one of the most important technologies shaping our future. In this article, we'll learn about the basic concepts of AI and how it affects our daily lives...",
-                    Slug = "introduction-to-ai",
-                    CategoryId = (await _context.Categories.FirstOrDefaultAsync(c => c.Slug == "technology"))?.Id ?? 1,
-                    ApplicationUserId = author.Id,
-                    ThumbnailUrl = "/images/blog/ai.jpg"
-                },
-                new Post
-                {
-                    TitleAr = "تعلم البرمجة بلغة Python",
-                    TitleEn = "Learn Python Programming",
-                    ShortDescriptionAr = "دليل المبتدئين لتعلم Python",
-                    ShortDescriptionEn = "Beginner's guide to Python",
-                    DescriptionAr = "Python هي واحدة من أكثر لغات البرمجة شعبية وسهولة في التعلم. في هذا المقال، سنتعرف على أساسيات البرمجة بلغة Python...",
-                    DescriptionEn = "Python is one of the most popular and easy-to-learn programming languages. In this article, we'll explore the basics of Python programming...",
-                    Slug = "learn-python-programming",
-                    CategoryId = (await _context.Categories.FirstOrDefaultAsync(c => c.Slug == "programming"))?.Id ?? 2,
-                    ApplicationUserId = author.Id,
-                    ThumbnailUrl = "/images/blog/python.jpg"
-                },
-                new Post
-                {
-                    TitleAr = "كيف تبدأ مشروعك الخاص",
-                    TitleEn = "How to Start Your Business",
-                    ShortDescriptionAr = "خطوات بدء مشروعك الخاص",
-                    ShortDescriptionEn = "Steps to start your own business",
-                    DescriptionAr = "بدء مشروع خاص يحتاج إلى تخطيط جيد وفهم عميق للسوق. في هذا المقال، سنستعرض الخطوات الأساسية لبدء مشروعك الخاص...",
-                    DescriptionEn = "Starting a business requires good planning and deep market understanding. In this article, we'll review the essential steps to start your own business...",
-                    Slug = "start-your-business",
-                    CategoryId = (await _context.Categories.FirstOrDefaultAsync(c => c.Slug == "entrepreneurship"))?.Id ?? 3,
-                    ApplicationUserId = author.Id,
-                    ThumbnailUrl = "/images/blog/business.jpg"
-                },
-                new Post
-                {
-                    TitleAr = "رحلة تطوير الذات",
-                    TitleEn = "Self Development Journey",
-                    ShortDescriptionAr = "خطوات تطوير الذات",
-                    ShortDescriptionEn = "Steps for self-development",
-                    DescriptionAr = "تطوير الذات هو رحلة مستمرة نحو النجاح. في هذا المقال، سنتعرف على أهم الاستراتيجيات لتطوير الذات...",
-                    DescriptionEn = "Self-development is a continuous journey towards success. In this article, we'll learn about the most important self-development strategies...",
-                    Slug = "self-development-journey",
-                    CategoryId = (await _context.Categories.FirstOrDefaultAsync(c => c.Slug == "self-development"))?.Id ?? 4,
-                    ApplicationUserId = author.Id,
-                    ThumbnailUrl = "/images/blog/self-development.jpg"
-                }
-            };
+                    new Category { NameEn = "Technology", NameAr = "التكنولوجيا" },
+                    new Category { NameEn = "Health", NameAr = "الصحة" },
+                    new Category { NameEn = "Sports", NameAr = "الرياضة" },
+                    new Category { NameEn = "Science", NameAr = "العلوم" }
+                };
 
-            await _context.Posts!.AddRangeAsync(posts);
-            await _context.SaveChangesAsync();
+                await context.Categories.AddRangeAsync(categories);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private static async Task SeedSettings(ApplicationDbContext context)
+        {
+            if (!await context.Settings.AnyAsync())
+            {
+                var settings = new Setting
+                {
+                    SiteName = "My Blog",
+                    Title = "Welcome to My Blog",
+                    ShortDescription = "A multilingual blog about various topics",
+                    ThumbnailUrl = "/images/logo.png",
+                    FacebookUrl = "https://facebook.com/myblog",
+                    TwitterUrl = "https://twitter.com/myblog",
+                    GithubUrl = "https://github.com/myblog"
+                };
+
+                await context.Settings.AddAsync(settings);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private static async Task SeedSamplePosts(ApplicationDbContext context, UserManager<IdentityUser> userMgr)
+        {
+            if (!await context.Posts.AnyAsync())
+            {
+                var admin = await userMgr.FindByEmailAsync("admin@blog.com");
+                if (admin == null) return;
+
+                var category = await context.Categories.FirstOrDefaultAsync();
+                if (category == null) return;
+
+                var post = new Post
+                {
+                    TitleEn = "Sample Post",
+                    TitleAr = "مقال تجريبي",
+                    ShortDescriptionEn = "This is a sample post",
+                    ShortDescriptionAr = "هذا مقال تجريبي",
+                    DescriptionEn = "This is a sample post content",
+                    DescriptionAr = "هذا محتوى المقال التجريبي",
+                    Slug = "sample-post",
+                    ThumbnailUrl = "/images/blog/default.jpg",
+                    CategoryId = category.Id,
+                    ApplicationUserId = admin.Id,
+                    IsPublished = true,
+                    CreateDate = DateTime.UtcNow
+                };
+
+                await context.Posts.AddAsync(post);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

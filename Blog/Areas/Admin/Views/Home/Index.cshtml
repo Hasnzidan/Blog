@@ -62,6 +62,27 @@
                     <div class="row">
                         <div class="col-8">
                             <div class="numbers">
+                                <p class="text-sm mb-0 text-capitalize font-weight-bold">@Localizer["Categories"]</p>
+                                <h5 class="font-weight-bolder mb-0">
+                                    @Model.CategoriesCount
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-4 text-end">
+                            <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle">
+                                <i class="fas fa-folder text-lg opacity-10" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-4">
+            <div class="card hover-shadow-lg">
+                <div class="card-body p-3">
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="numbers">
                                 <p class="text-sm mb-0 text-capitalize font-weight-bold">@Localizer["Comments"]</p>
                                 <h5 class="font-weight-bolder mb-0">
                                     @Model.CommentsCount
@@ -126,11 +147,6 @@
                             </a>
                         </div>
                         <div class="col-md-3 col-sm-6 mb-2">
-                            <a asp-area="Admin" asp-controller="Tag" asp-action="Create" class="btn btn-info w-100">
-                                <i class="fas fa-tag me-2"></i> @Localizer["New Tag"]
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-sm-6 mb-2">
                             <a href="#" class="btn btn-secondary w-100" onclick="window.location.reload()">
                                 <i class="fas fa-sync-alt me-2"></i> @Localizer["Refresh Data"]
                             </a>
@@ -192,19 +208,10 @@
                     <h6>@Localizer["Posts by Category"]</h6>
                 </div>
                 <div class="card-body p-3">
-                    @if (Model.PostsByCategory.Any())
-                    {
-                        <div class="chart-container" style="height: 300px;">
-                            <canvas id="postsByCategoryChart"></canvas>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-4">
-                            <i class="fas fa-chart-pie fa-3x text-secondary mb-3"></i>
-                            <p class="text-secondary">@Localizer["No data available"]</p>
-                        </div>
-                    }
+                    <div class="text-center py-4">
+                        <i class="fas fa-chart-pie fa-3x text-secondary mb-3"></i>
+                        <p class="text-secondary">@Localizer["No data available"]</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -377,11 +384,9 @@
             margin: auto;
         }
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css">
 }
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <script>
         $(document).ready(function() {
             // Initialize tooltips
@@ -389,72 +394,6 @@
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl)
             });
-
-            // Posts by Category Chart
-            @if (Model.PostsByCategory.Any())
-            {
-                <text>
-                var ctxCategory = document.getElementById('postsByCategoryChart').getContext('2d');
-                new Chart(ctxCategory, {
-                    type: 'doughnut',
-                    data: {
-                        labels: [@Html.Raw(string.Join(",", Model.PostsByCategory.Keys.Select(k => $"'{k}'")))],
-                        datasets: [{
-                            data: [@string.Join(",", Model.PostsByCategory.Values)],
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.8)',
-                                'rgba(54, 162, 235, 0.8)',
-                                'rgba(255, 206, 86, 0.8)',
-                                'rgba(75, 192, 192, 0.8)',
-                                'rgba(153, 102, 255, 0.8)'
-                            ]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: '@(isRtl ? "left" : "right")'
-                            }
-                        }
-                    }
-                });
-                </text>
-            }
-
-            // Posts by Tag Chart
-            @if (Model.PostsByTag.Any())
-            {
-                <text>
-                var ctxTag = document.getElementById('postsByTagChart').getContext('2d');
-                new Chart(ctxTag, {
-                    type: 'bar',
-                    data: {
-                        labels: [@Html.Raw(string.Join(",", Model.PostsByTag.Keys.Select(k => $"'{k}'")))],
-                        datasets: [{
-                            label: '@Localizer["Posts"]',
-                            data: [@string.Join(",", Model.PostsByTag.Values)],
-                            backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            }
-                        }
-                    }
-                });
-                </text>
-            }
         });
     </script>
 }

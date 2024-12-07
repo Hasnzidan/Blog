@@ -1,4 +1,4 @@
-@model List<Blog.ViewModels.PostVM>
+@model IEnumerable<Blog.ViewModels.PostViewModel>
 @using Microsoft.Extensions.Localization
 @using Blog.Resources
 @inject IStringLocalizer<SharedResource> Localizer
@@ -8,59 +8,127 @@
 }
 
 <div class="container-fluid">
-    <a class="btn btn-primary mb-1" asp-action="Create" asp-controller="Post" asp-area="Admin">@Localizer["AddPost"]</a>
     <div class="card">
         <div class="card-header bg-primary">
-            <h4 class="card-title text-white">@Localizer["ListOfPosts"]</h4>
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="card-title text-white mb-0">@Localizer["ListOfPosts"]</h4>
+                <a asp-action="Create" class="btn btn-light">@Localizer["AddPost"]</a>
+            </div>
         </div>
-        <div class="card-body bg-light">
-            @foreach (var post in Model)
-            {
-                <div class="rounded mb-4 bg-white p-3">
-                    <div class="row">
-                        <div class="col-2 d-flex justify-content-center flex-column">
-                            <img class="img-fluid post-thumbnail" src="@(string.IsNullOrEmpty(post.ThumbnailUrl) ? "/Thumbnails/defaultthumbnail.jpg" : post.ThumbnailUrl)" alt="@post.TitleEn" />
-                        </div>
-                        <div class="col-5 d-flex justify-content-center flex-column">
-                            <h4 class="post-title text-primary">@post.TitleEn</h4>
-                            <p class="post-date">@post.CreatedDate.ToString("d")</p>
-                        </div>
-                        <div class="col-5 d-flex justify-content-center flex-column">
-                            <h4 class="author-name text-primary">@post.AuthorName</h4>
-                            <div class="d-flex justify-content-end gap-2">
-                                <a class="btn btn-warning" asp-action="Edit" asp-controller="Post" asp-area="Admin" asp-route-id="@post.Id">@Localizer["Edit"]</a>
-                                <form asp-action="Delete" asp-controller="Post" asp-area="Admin" asp-route-id="@post.Id" method="post" class="d-inline" 
-                                      onsubmit="return confirm('@Localizer["DeleteConfirmation"]')">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-danger">@Localizer["Delete"]</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>@Localizer["Title"]</th>
+                            <th>@Localizer["Category"]</th>
+                            <th>@Localizer["Author"]</th>
+                            <th>@Localizer["Status"]</th>
+                            <th>@Localizer["CreatedDate"]</th>
+                            <th>@Localizer["Actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var post in Model)
+                        {
+                            <tr>
+                                <td>@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? post.TitleAr : post.TitleEn)</td>
+                                <td>@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? post.CategoryNameAr : post.CategoryNameEn)</td>
+                                <td>@post.AuthorName</td>
+                                <td>
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input publish-toggle" 
+                                               id="publishToggle_@post.Id" 
+                                               data-id="@post.Id" 
+                                               @(post.IsPublished ? "checked" : "")>
+                                        <label class="custom-control-label" for="publishToggle_@post.Id">
+                                            @(post.IsPublished ? Localizer["Published"] : Localizer["Draft"])
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>@post.CreatedDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-action="Edit" asp-route-id="@post.Id" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger delete-post" data-id="@post.Id">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
+@section Scripts {
+    <script>
+        $(function() {
+            // Handle publish toggle
+            $('.publish-toggle').change(function() {
+                const postId = $(this).data('id');
+                const $label = $(this).next('label');
+                const $toggle = $(this);
+                
+                $.post('/Admin/Post/TogglePublish/' + postId)
+                    .done(function(response) {
+                        if (response.success) {
+                            $label.text(response.isPublished ? '@Localizer["Published"]' : '@Localizer["Draft"]');
+                        } else {
+                            $toggle.prop('checked', !$toggle.prop('checked'));
+                            alert(response.message || '@Localizer["ErrorUpdatingPost"]');
+                        }
+                    })
+                    .fail(function() {
+                        $toggle.prop('checked', !$toggle.prop('checked'));
+                        alert('@Localizer["ErrorUpdatingPost"]');
+                    });
+            });
+
+            // Handle post deletion
+            $('.delete-post').click(function() {
+                const postId = $(this).data('id');
+                const $row = $(this).closest('tr');
+                
+                if (confirm('@Localizer["DeleteConfirmation"]')) {
+                    $.post('/Admin/Post/Delete/' + postId)
+                        .done(function(response) {
+                            if (response.success) {
+                                $row.fadeOut(function() { $(this).remove(); });
+                            } else {
+                                alert(response.message || '@Localizer["ErrorDeletingPost"]');
+                            }
+                        })
+                        .fail(function() {
+                            alert('@Localizer["ErrorDeletingPost"]');
+                        });
+                }
+            });
+        });
+    </script>
+}
+
 @section Styles {
     <style>
-        .post-thumbnail {
-            object-fit: cover;
-            height: 100px;
-            width: 100%;
+        .table td, .table th {
+            vertical-align: middle;
         }
-        .post-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
+        
+        .btn-group .btn {
+            margin-right: 2px;
         }
-        .author-name {
-            font-size: 1rem;
-            font-weight: bold;
+        
+        .btn-group .btn:last-child {
+            margin-right: 0;
         }
-        .gap-2 {
-            gap: 0.5rem;
+
+        .custom-switch {
+            padding-left: 2.25rem;
         }
     </style>
 }

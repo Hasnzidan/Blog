@@ -1,83 +1,86 @@
-using Blog.Data;
-using Blog.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Blog.Models;
+using Blog.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Blog.Controllers
 {
     public class PageController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<PageController> _logger;
 
-        public PageController(ApplicationDbContext context)
+        public PageController(ApplicationDbContext context, ILogger<PageController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<IActionResult> About()
         {
-            var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "about");
-            
-            if (page == null)
+            try
             {
-                return NotFound();
-            }
+                var page = await _context.Pages!
+                    .FirstOrDefaultAsync(p => p.Slug == "about" && p.Published);
 
-            var vm = new PageVM()
+                if (page == null)
+                {
+                    _logger.LogWarning("About page not found");
+                    return NotFound();
+                }
+
+                return View(page);
+            }
+            catch (Exception ex)
             {
-                Title = page.Title,
-                Content = page.Content,
-                ShortDescription = page.ShortDescription,
-                ThumbnailUrl = page.ThumbnailUrl,
-                CreatedDate = page.CreatedDate,
-                Published = page.Published,
-                Slug = page.Slug
-            };
-            return View(vm);
+                _logger.LogError(ex, "Error retrieving About page");
+                return StatusCode(500);
+            }
         }
 
         public async Task<IActionResult> Contact()
         {
-            var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "contact");
-            
-            if (page == null)
+            try
             {
-                return NotFound();
-            }
+                var page = await _context.Pages!
+                    .FirstOrDefaultAsync(p => p.Slug == "contact" && p.Published);
 
-            var vm = new PageVM()
+                if (page == null)
+                {
+                    _logger.LogWarning("Contact page not found");
+                    return NotFound();
+                }
+
+                return View(page);
+            }
+            catch (Exception ex)
             {
-                Title = page.Title,
-                Content = page.Content,
-                ShortDescription = page.ShortDescription,
-                ThumbnailUrl = page.ThumbnailUrl,
-                CreatedDate = page.CreatedDate,
-                Published = page.Published,
-                Slug = page.Slug
-            };
-            return View(vm);
+                _logger.LogError(ex, "Error retrieving Contact page");
+                return StatusCode(500);
+            }
         }
 
         public async Task<IActionResult> PrivacyPolicy()
         {
-            var page = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "privacy-policy");
-            
-            if (page == null)
+            try
             {
-                return NotFound();
-            }
+                var page = await _context.Pages!
+                    .FirstOrDefaultAsync(p => p.Slug == "privacy-policy" && p.Published);
 
-            var vm = new PageVM()
+                if (page == null)
+                {
+                    _logger.LogWarning("Privacy Policy page not found");
+                    return NotFound();
+                }
+
+                return View(page);
+            }
+            catch (Exception ex)
             {
-                Title = page.Title,
-                Content = page.Content,
-                ShortDescription = page.ShortDescription,
-                ThumbnailUrl = page.ThumbnailUrl,
-                CreatedDate = page.CreatedDate,
-                Published = page.Published,
-                Slug = page.Slug
-            };
-            return View(vm);
+                _logger.LogError(ex, "Error retrieving Privacy Policy page");
+                return StatusCode(500);
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
+using Blog.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Blog.Models;
 
 namespace Blog.Data
 {
@@ -11,60 +11,45 @@ namespace Blog.Data
         {
         }
 
-        public DbSet<Post> Posts { get; set; }
-        public DbSet<Setting> Settings { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<PostTag> PostTags { get; set; }
-        public DbSet<Comment> Comments { get; set; }
-        public DbSet<Page> Pages { get; set; }
+        public DbSet<Post> Posts { get; set; } = null!;
+        public DbSet<Category> Categories { get; set; } = null!;
+        public DbSet<Comment> Comments { get; set; } = null!;
+        public DbSet<Page> Pages { get; set; } = null!;
+        public DbSet<Setting> Settings { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            // Configure Post-User relationship with restricted cascade delete
-            builder.Entity<Post>()
-                .HasOne(p => p.ApplicationUser)
-                .WithMany(u => u.Posts)
-                .HasForeignKey(p => p.ApplicationUserId)
-                .OnDelete(DeleteBehavior.NoAction); // Changed to NoAction to prevent cycles
-
-            // Configure Post-Category relationship
             builder.Entity<Post>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Posts)
                 .HasForeignKey(p => p.CategoryId)
-                .OnDelete(DeleteBehavior.NoAction); // Changed to NoAction for consistency
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure PostTag relationships
-            builder.Entity<PostTag>()
-                .HasKey(pt => new { pt.PostId, pt.TagId });
+            builder.Entity<Comment>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<PostTag>()
-                .HasOne(pt => pt.Post)
-                .WithMany(p => p.PostTags)
-                .HasForeignKey(pt => pt.PostId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<PostTag>()
-                .HasOne(pt => pt.Tag)
-                .WithMany(t => t.PostTags)
-                .HasForeignKey(pt => pt.TagId)
-                .OnDelete(DeleteBehavior.NoAction); // Changed to NoAction for consistency
-
-            // Configure Comment relationships
             builder.Entity<Comment>()
                 .HasOne(c => c.Post)
                 .WithMany(p => p.Comments)
                 .HasForeignKey(c => c.PostId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Comment>()
-                .HasOne(c => c.User)
-                .WithMany()
-                .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.NoAction); // Changed to NoAction for consistency
+            builder.Entity<Category>()
+                .HasMany(c => c.Posts)
+                .WithOne(p => p.Category)
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Page>()
+                .HasKey(p => p.Id);
+
+            builder.Entity<Setting>()
+                .HasKey(s => s.Id);
         }
     }
 }

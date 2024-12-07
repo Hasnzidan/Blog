@@ -30,14 +30,6 @@ namespace Blog.Utilities
                     _logger.LogInformation("Categories seeded successfully");
                 }
 
-                if (!_context.Tags.Any())
-                {
-                    _logger.LogInformation("Seeding tags...");
-                    await SeedTagsAsync();
-                    await _context.SaveChangesAsync();
-                    _logger.LogInformation("Tags seeded successfully");
-                }
-
                 if (!_context.Pages!.Any())
                 {
                     _logger.LogInformation("Seeding pages...");
@@ -81,55 +73,43 @@ namespace Blog.Utilities
             await _context.Categories.AddRangeAsync(categories);
         }
 
-        private async Task SeedTagsAsync()
-        {
-            var tags = new List<Tag>
-            {
-                new Tag
-                {
-                    NameAr = "سي شارب",
-                    NameEn = "C#",
-                    Slug = "csharp"
-                },
-                new Tag
-                {
-                    NameAr = "ايه اس بي نت كور",
-                    NameEn = "ASP.NET Core",
-                    Slug = "aspnet-core"
-                }
-            };
-
-            await _context.Tags.AddRangeAsync(tags);
-        }
-
         private async Task SeedPagesAsync()
         {
             var pages = new List<Page>
             {
                 new Page
                 {
-                    Title = "About Us",
+                    TitleEn = "About Us",
+                    TitleAr = "من نحن",
                     Slug = "about",
-                    ShortDescription = "Learn more about our blog",
-                    Content = "<h2>Welcome to Our Blog</h2><p>We are passionate about sharing knowledge and experiences in technology, development, and programming.</p><p>Our mission is to provide high-quality content that helps developers grow and learn.</p>",
+                    ShortDescriptionEn = "Learn more about our company",
+                    ShortDescriptionAr = "تعرف أكثر على شركتنا",
+                    ContentEn = "This is the about us page content.",
+                    ContentAr = "هذا هو محتوى صفحة من نحن",
                     Published = true,
                     CreatedDate = DateTime.Now
                 },
                 new Page
                 {
-                    Title = "Contact Us",
+                    TitleEn = "Contact Us",
+                    TitleAr = "اتصل بنا",
                     Slug = "contact",
-                    ShortDescription = "Get in touch with us",
-                    Content = "<h2>Contact Information</h2><p>Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>",
+                    ShortDescriptionEn = "Get in touch with us",
+                    ShortDescriptionAr = "تواصل معنا",
+                    ContentEn = "This is the contact us page content.",
+                    ContentAr = "هذا هو محتوى صفحة اتصل بنا",
                     Published = true,
                     CreatedDate = DateTime.Now
                 },
                 new Page
                 {
-                    Title = "Privacy Policy",
+                    TitleEn = "Privacy Policy",
+                    TitleAr = "سياسة الخصوصية",
                     Slug = "privacy-policy",
-                    ShortDescription = "Our Privacy Policy",
-                    Content = "<h2>Privacy Policy</h2><p>This privacy policy sets out how we use and protect any information that you give us when you use this website.</p>",
+                    ShortDescriptionEn = "Our privacy policy",
+                    ShortDescriptionAr = "سياسة الخصوصية لدينا",
+                    ContentEn = "This is the privacy policy page content.",
+                    ContentAr = "هذا هو محتوى صفحة سياسة الخصوصية",
                     Published = true,
                     CreatedDate = DateTime.Now
                 }

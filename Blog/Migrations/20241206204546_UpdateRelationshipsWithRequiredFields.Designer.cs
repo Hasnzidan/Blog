@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blog.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241204034713_UpdatePostTagRelations")]
-    partial class UpdatePostTagRelations
+    [Migration("20241206204546_UpdateRelationshipsWithRequiredFields")]
+    partial class UpdateRelationshipsWithRequiredFields
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -148,6 +148,9 @@ namespace Blog.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
                     b.Property<int>("PostId")
                         .HasColumnType("int");
 
@@ -210,33 +213,32 @@ namespace Blog.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("ApplicationUserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CategoryId1")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("DescriptionAr")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DescriptionEn")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ShortDescription")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ShortDescriptionAr")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShortDescriptionEn")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Slug")
@@ -245,22 +247,25 @@ namespace Blog.Migrations
                     b.Property<string>("ThumbnailUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("TitleAr")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TitleEn")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("CategoryId1");
 
                     b.ToTable("Posts");
                 });
@@ -322,7 +327,11 @@ namespace Blog.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameEn")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -471,15 +480,15 @@ namespace Blog.Migrations
             modelBuilder.Entity("Blog.Models.Comment", b =>
                 {
                     b.HasOne("Blog.Models.Post", "Post")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Blog.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -491,16 +500,15 @@ namespace Blog.Migrations
                 {
                     b.HasOne("Blog.Models.ApplicationUser", "ApplicationUser")
                         .WithMany("Posts")
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("Blog.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Blog.Models.Category", null)
                         .WithMany("Posts")
-                        .HasForeignKey("CategoryId1");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUser");
 
@@ -512,13 +520,13 @@ namespace Blog.Migrations
                     b.HasOne("Blog.Models.Post", "Post")
                         .WithMany("PostTags")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Blog.Models.Tag", "Tag")
                         .WithMany("PostTags")
                         .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -589,6 +597,8 @@ namespace Blog.Migrations
 
             modelBuilder.Entity("Blog.Models.Post", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("PostTags");
                 });
 

@@ -21,11 +21,11 @@
                         <i class="fas fa-calendar-alt"></i>
                         @Model.CreateDate.ToString("dd MMM yyyy")
                     </span>
-                    @if (Model.ApplicationUser != null)
+                    @if (Model.User != null)
                     {
                         <span class="author mx-3">
                             <i class="fas fa-user"></i>
-                            @Model.ApplicationUser.FirstName @Model.ApplicationUser.LastName
+                            @(Model.User.FirstName + " " + Model.User.LastName)
                         </span>
                     }
                 </div>
@@ -44,19 +44,12 @@
                 @Html.Raw(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? Model.DescriptionAr : Model.DescriptionEn)
             </article>
 
-            <!-- Tags -->
-            @if (Model.PostTags != null && Model.PostTags.Any())
-            {
-                <div class="post-tags mt-4">
-                    <h5>الوسوم:</h5>
-                    <div class="tags">
-                        @foreach (var postTag in Model.PostTags)
-                        {
-                            <span class="badge bg-secondary me-2">@(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? postTag.Tag?.NameAr : postTag.Tag?.NameEn)</span>
-                        }
-                    </div>
+            <div class="blog-details-author">
+                <img src="/images/default-profile.jpg" alt="Author Image">
+                <div class="blog-details-author-info">
+                    <h4>@(Model.User != null ? $"{Model.User.FirstName} {Model.User.LastName}".Trim() : "Unknown Author")</h4>
                 </div>
-            }
+            </div>
         </div>
     </div>
 </div>
@@ -103,11 +96,6 @@
             width: 100%;
             max-height: 500px;
             object-fit: cover;
-        }
-
-        .post-tags .badge {
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
         }
     </style>
 }

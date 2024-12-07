@@ -16,6 +16,8 @@ namespace Blog.Models
         public string ShortDescriptionAr { get; set; } = string.Empty;
         [Required]
         public string DescriptionAr { get; set; } = string.Empty;
+        [Required]
+        public string ContentAr { get; set; } = string.Empty;
         
         // English content
         [Required]
@@ -24,42 +26,37 @@ namespace Blog.Models
         public string ShortDescriptionEn { get; set; } = string.Empty;
         [Required]
         public string DescriptionEn { get; set; } = string.Empty;
+        [Required]
+        public string ContentEn { get; set; } = string.Empty;
         
         // Language-independent properties
+        public string? ThumbnailUrl { get; set; }
+        
+        [Required]
+        public string Slug { get; set; } = string.Empty;
+        
+        public DateTime CreateDate { get; set; } = DateTime.Now;
+        public DateTime LastModifiedDate { get; set; }
+        public int ViewCount { get; set; }
+        public bool IsPublished { get; set; }
+        
         [Required]
         public string ApplicationUserId { get; set; } = string.Empty;
         
         [ForeignKey(nameof(ApplicationUserId))]
-        public virtual ApplicationUser? ApplicationUser { get; set; }
+        public virtual ApplicationUser? User { get; set; }
         
-        public DateTime CreateDate { get; set; } = DateTime.Now;
-        public DateTime? UpdateDate { get; set; }
-        public string? Slug { get; set; }
-        public string? ThumbnailUrl { get; set; }
-
-        // Helper method to get thumbnail URL with fallback
-        public string GetThumbnailUrl()
-        {
-            if (string.IsNullOrEmpty(ThumbnailUrl))
-            {
-                return "/images/blog/default.jpg";
-            }
-            return ThumbnailUrl;
-        }
-
-        // Category relationship
         [Required]
         public int CategoryId { get; set; }
         
         [ForeignKey(nameof(CategoryId))]
         public virtual Category? Category { get; set; }
 
-        // Collections
-        public virtual ICollection<PostTag> PostTags { get; set; } = new List<PostTag>();
         public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
-        // Status flags
-        public bool IsPublished { get; set; }
-        public int ViewCount { get; set; }
+        public string GetThumbnailUrl()
+        {
+            return ThumbnailUrl ?? "/images/default-thumbnail.jpg";
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace Blog.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User?.Identity?.IsAuthenticated == true)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -41,19 +41,12 @@ namespace Blog.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    var errors = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
-
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        return Json(new { success = false, message = string.Join(", ", errors) });
-                    }
-
-                    foreach (var error in errors)
-                    {
-                        _notification.Error(error);
+                        return Json(new { success = false, errors = ModelState.ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
+                        )});
                     }
                     return View(vm);
                 }
@@ -87,47 +80,51 @@ namespace Blog.Controllers
                 {
                     UserName = vm.UserName,
                     Email = vm.Email,
-                    FirstName = vm.FirstName,
-                    LastName = vm.LastName,
+                    FirstName = vm.FirstName ?? string.Empty,
+                    LastName = vm.LastName ?? string.Empty,
                     EmailConfirmed = true // تفعيل البريد الإلكتروني تلقائياً
                 };
 
-                var result = await _userManager.CreateAsync(user, vm.Password);
-
-                if (result.Succeeded)
+                try
                 {
-                    // Add user to role
-                    await _userManager.AddToRoleAsync(user, vm.Role);
-
-                    // Sign in the user
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-
-                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    var result = await _userManager.CreateAsync(user, vm.Password);
+                    if (result.Succeeded)
                     {
-                        return Json(new { success = true, returnUrl = "/" });
+                        // Add user to role
+                        await _userManager.AddToRoleAsync(user, vm.Role);
+
+                        // Sign in the user
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+
+                        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                        {
+                            return Json(new { success = true, returnUrl = "/" });
+                        }
+
+                        _notification.Success("Registration successful! Welcome to our blog.");
+                        return RedirectToAction("Index", "Home");
                     }
 
-                    _notification.Success("Registration successful! Welcome to our blog.");
-                    return RedirectToAction("Index", "Home");
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
-
-                foreach (var error in result.Errors)
+                catch (Exception)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    ModelState.AddModelError(string.Empty, "An error occurred during registration.");
                 }
 
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return Json(new { success = false, message = string.Join(", ", result.Errors.Select(e => e.Description)) });
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    _notification.Error(error.Description);
+                    return Json(new { success = false, errors = ModelState.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
+                    )});
                 }
                 return View(vm);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
@@ -141,7 +138,7 @@ namespace Blog.Controllers
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
-            if (User.Identity.IsAuthenticated)
+            if (User?.Identity?.IsAuthenticated == true)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -156,19 +153,12 @@ namespace Blog.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    var errors = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
-
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        return Json(new { success = false, message = string.Join(", ", errors) });
-                    }
-
-                    foreach (var error in errors)
-                    {
-                        _notification.Error(error);
+                        return Json(new { success = false, errors = ModelState.ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
+                        )});
                     }
                     return View(vm);
                 }
@@ -183,44 +173,63 @@ namespace Blog.Controllers
                     {
                         return Json(new { success = false, message = "Invalid username/email or password." });
                     }
-                    _notification.Error("Invalid username/email or password.");
+                    ModelState.AddModelError("", "Invalid username/email or password.");
                     return View(vm);
                 }
 
-                var result = await _signInManager.PasswordSignInAsync(user, vm.Password, vm.RememberMe, false);
-
-                if (result.Succeeded)
+                var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+                if (!isEmailConfirmed)
                 {
-                    // Get user's role
-                    var roles = await _userManager.GetRolesAsync(user);
-                    vm.Role = roles.FirstOrDefault();
-
-                    // تحديد الصفحة التي سيتم التوجيه إليها بناءً على الدور
-                    string redirectUrl = returnUrl ?? "/";
-                    if (await _userManager.IsInRoleAsync(user, WebsiteRoles.WebsiteAdmin))
-                    {
-                        redirectUrl = "/Admin/Home";
-                    }
-
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        return Json(new { success = true, returnUrl = redirectUrl });
+                        return Json(new { success = false, message = "Please confirm your email before logging in." });
                     }
-
-                    _notification.Success("Login successful! Welcome back.");
-                    return LocalRedirect(redirectUrl);
+                    ModelState.AddModelError("", "Please confirm your email before logging in.");
+                    return View(vm);
                 }
-                else
+
+                try
                 {
-                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    var result = await _signInManager.PasswordSignInAsync(user, vm.Password, vm.RememberMe, false);
+
+                    if (result.Succeeded)
                     {
-                        return Json(new { success = false, message = "Invalid username/email or password." });
+                        // Get user's role
+                        var roles = await _userManager.GetRolesAsync(user);
+                        vm.Role = roles.FirstOrDefault();
+
+                        // تحديد الصفحة التي سيتم التوجيه إليها بناءً على الدور
+                        string redirectUrl = returnUrl ?? "/";
+                        if (await _userManager.IsInRoleAsync(user, WebsiteRoles.WebsiteAdmin))
+                        {
+                            redirectUrl = "/Admin/Home";
+                        }
+
+                        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                        {
+                            return Json(new { success = true, returnUrl = redirectUrl });
+                        }
+
+                        _notification.Success("Login successful! Welcome back.");
+                        return LocalRedirect(redirectUrl);
                     }
-                    _notification.Error("Invalid username/email or password.");
+                    else
+                    {
+                        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                        {
+                            return Json(new { success = false, message = "Invalid username/email or password." });
+                        }
+                        ModelState.AddModelError("", "Invalid username/email or password.");
+                        return View(vm);
+                    }
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError(string.Empty, "An error occurred during login.");
                     return View(vm);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
@@ -234,7 +243,7 @@ namespace Blog.Controllers
         [HttpGet]
         public IActionResult ForgotPassword()
         {
-            if (User.Identity!.IsAuthenticated)
+            if (User?.Identity?.IsAuthenticated == true)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -250,11 +259,24 @@ namespace Blog.Controllers
             }
 
             var user = await _userManager.FindByEmailAsync(vm.Email);
-            if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
+            if (user == null)
             {
-                // Don't reveal that the user does not exist or is not confirmed
-                _notification.Success("If your email is registered and confirmed, you will receive password reset instructions.");
-                return RedirectToAction(nameof(Login));
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = "User not found." });
+                }
+                ModelState.AddModelError("", "User not found.");
+                return View(vm);
+            }
+
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+            {
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = "Please confirm your email before resetting password." });
+                }
+                ModelState.AddModelError("", "Please confirm your email before resetting password.");
+                return View(vm);
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -287,7 +309,7 @@ namespace Blog.Controllers
                 {
                     return Json(new { success = false, errors = ModelState.ToDictionary(
                         kvp => kvp.Key,
-                        kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
+                        kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
                     )});
                 }
                 return View(vm);
@@ -296,28 +318,35 @@ namespace Blog.Controllers
             var user = await _userManager.FindByEmailAsync(vm.Email!);
             if (user == null)
             {
-                _notification.Error("Invalid request");
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return Json(new { success = false, message = "Invalid request" });
+                    return Json(new { success = false, message = "User not found." });
                 }
-                return RedirectToAction(nameof(Login));
+                ModelState.AddModelError("", "User not found.");
+                return View(vm);
             }
 
-            var result = await _userManager.ResetPasswordAsync(user, vm.Token!, vm.NewPassword!);
-            if (result.Succeeded)
+            try
             {
-                _notification.Success("Password has been reset successfully!");
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                var result = await _userManager.ResetPasswordAsync(user, vm.Token!, vm.NewPassword!);
+                if (result.Succeeded)
                 {
-                    return Json(new { success = true, returnUrl = Url.Action("Login", "Account") });
+                    _notification.Success("Password has been reset successfully!");
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = true, returnUrl = Url.Action("Login", "Account") });
+                    }
+                    return RedirectToAction(nameof(Login));
                 }
-                return RedirectToAction(nameof(Login));
-            }
 
-            foreach (var error in result.Errors)
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+            catch (Exception)
             {
-                ModelState.AddModelError("", error.Description);
+                ModelState.AddModelError(string.Empty, "An error occurred during password reset.");
             }
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -330,9 +359,17 @@ namespace Blog.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
-            _notification.Success("Logged out successfully!");
-            return RedirectToAction("Index", "Home");
+            try
+            {
+                await _signInManager.SignOutAsync();
+                _notification.Success("Logged out successfully!");
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception)
+            {
+                _notification.Error("An error occurred during logout.");
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]

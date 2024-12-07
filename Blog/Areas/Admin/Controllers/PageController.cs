@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 namespace Blog.Areas.Admin.Controllers
 {
@@ -47,13 +48,16 @@ namespace Blog.Areas.Admin.Controllers
                 var vm = new PageVM()
                 {
                     Id = page.Id,
-                    Title = page.Title ?? string.Empty,
-                    ShortDescription = page.ShortDescription ?? string.Empty,
-                    Content = page.Content ?? string.Empty,
-                    ThumbnailUrl = page.ThumbnailUrl ?? string.Empty,
+                    TitleEn = page.TitleEn,
+                    TitleAr = page.TitleAr,
+                    ShortDescriptionEn = page.ShortDescriptionEn,
+                    ShortDescriptionAr = page.ShortDescriptionAr,
+                    ContentEn = page.ContentEn,
+                    ContentAr = page.ContentAr,
+                    ThumbnailUrl = page.ThumbnailUrl,
                     Published = page.Published,
                     CreatedDate = page.CreatedDate,
-                    Slug = page.Slug ?? string.Empty
+                    Slug = page.Slug
                 };
                 return View(vm);
             }
@@ -91,9 +95,13 @@ namespace Blog.Areas.Admin.Controllers
                     return View(vm);
                 }
 
-                page.Title = vm.Title ?? string.Empty;
-                page.ShortDescription = vm.ShortDescription ?? string.Empty;
-                page.Content = vm.Content ?? string.Empty;
+                page.TitleEn = vm.TitleEn;
+                page.TitleAr = vm.TitleAr;
+                page.ShortDescriptionEn = vm.ShortDescriptionEn;
+                page.ShortDescriptionAr = vm.ShortDescriptionAr;
+                page.ContentEn = vm.ContentEn;
+                page.ContentAr = vm.ContentAr;
+                page.Published = vm.Published;
 
                 if (vm.Thumbnail != null)
                 {
@@ -109,6 +117,16 @@ namespace Blog.Areas.Admin.Controllers
                         using (var fileStream = new FileStream(path, FileMode.Create))
                         {
                             await vm.Thumbnail.CopyToAsync(fileStream);
+                        }
+
+                        // Delete old thumbnail if exists
+                        if (!string.IsNullOrEmpty(page.ThumbnailUrl))
+                        {
+                            string oldImagePath = Path.Combine(wwwRootPath, page.ThumbnailUrl.TrimStart('/'));
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
                         }
 
                         page.ThumbnailUrl = "/thumbnails/" + fileName;
@@ -144,13 +162,16 @@ namespace Blog.Areas.Admin.Controllers
                 var vm = new PageVM()
                 {
                     Id = page.Id,
-                    Title = page.Title ?? string.Empty,
-                    ShortDescription = page.ShortDescription ?? string.Empty,
-                    Content = page.Content ?? string.Empty,
-                    ThumbnailUrl = page.ThumbnailUrl ?? string.Empty,
+                    TitleEn = page.TitleEn,
+                    TitleAr = page.TitleAr,
+                    ShortDescriptionEn = page.ShortDescriptionEn,
+                    ShortDescriptionAr = page.ShortDescriptionAr,
+                    ContentEn = page.ContentEn,
+                    ContentAr = page.ContentAr,
+                    ThumbnailUrl = page.ThumbnailUrl,
                     Published = page.Published,
                     CreatedDate = page.CreatedDate,
-                    Slug = page.Slug ?? string.Empty
+                    Slug = page.Slug
                 };
                 return View(vm);
             }
@@ -188,9 +209,13 @@ namespace Blog.Areas.Admin.Controllers
                     return View(vm);
                 }
 
-                page.Title = vm.Title ?? string.Empty;
-                page.ShortDescription = vm.ShortDescription ?? string.Empty;
-                page.Content = vm.Content ?? string.Empty;
+                page.TitleEn = vm.TitleEn;
+                page.TitleAr = vm.TitleAr;
+                page.ShortDescriptionEn = vm.ShortDescriptionEn;
+                page.ShortDescriptionAr = vm.ShortDescriptionAr;
+                page.ContentEn = vm.ContentEn;
+                page.ContentAr = vm.ContentAr;
+                page.Published = vm.Published;
 
                 if (vm.Thumbnail != null)
                 {
@@ -206,6 +231,16 @@ namespace Blog.Areas.Admin.Controllers
                         using (var fileStream = new FileStream(path, FileMode.Create))
                         {
                             await vm.Thumbnail.CopyToAsync(fileStream);
+                        }
+
+                        // Delete old thumbnail if exists
+                        if (!string.IsNullOrEmpty(page.ThumbnailUrl))
+                        {
+                            string oldImagePath = Path.Combine(wwwRootPath, page.ThumbnailUrl.TrimStart('/'));
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
                         }
 
                         page.ThumbnailUrl = "/thumbnails/" + fileName;
@@ -241,13 +276,16 @@ namespace Blog.Areas.Admin.Controllers
                 var vm = new PageVM()
                 {
                     Id = page.Id,
-                    Title = page.Title ?? string.Empty,
-                    ShortDescription = page.ShortDescription ?? string.Empty,
-                    Content = page.Content ?? string.Empty,
-                    ThumbnailUrl = page.ThumbnailUrl ?? string.Empty,
+                    TitleEn = page.TitleEn,
+                    TitleAr = page.TitleAr,
+                    ShortDescriptionEn = page.ShortDescriptionEn,
+                    ShortDescriptionAr = page.ShortDescriptionAr,
+                    ContentEn = page.ContentEn,
+                    ContentAr = page.ContentAr,
+                    ThumbnailUrl = page.ThumbnailUrl,
                     Published = page.Published,
                     CreatedDate = page.CreatedDate,
-                    Slug = page.Slug ?? string.Empty
+                    Slug = page.Slug
                 };
                 return View(vm);
             }
@@ -285,9 +323,13 @@ namespace Blog.Areas.Admin.Controllers
                     return View(vm);
                 }
 
-                page.Title = vm.Title ?? string.Empty;
-                page.ShortDescription = vm.ShortDescription ?? string.Empty;
-                page.Content = vm.Content ?? string.Empty;
+                page.TitleEn = vm.TitleEn;
+                page.TitleAr = vm.TitleAr;
+                page.ShortDescriptionEn = vm.ShortDescriptionEn;
+                page.ShortDescriptionAr = vm.ShortDescriptionAr;
+                page.ContentEn = vm.ContentEn;
+                page.ContentAr = vm.ContentAr;
+                page.Published = vm.Published;
 
                 if (vm.Thumbnail != null)
                 {
@@ -303,6 +345,16 @@ namespace Blog.Areas.Admin.Controllers
                         using (var fileStream = new FileStream(path, FileMode.Create))
                         {
                             await vm.Thumbnail.CopyToAsync(fileStream);
+                        }
+
+                        // Delete old thumbnail if exists
+                        if (!string.IsNullOrEmpty(page.ThumbnailUrl))
+                        {
+                            string oldImagePath = Path.Combine(wwwRootPath, page.ThumbnailUrl.TrimStart('/'));
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
                         }
 
                         page.ThumbnailUrl = "/thumbnails/" + fileName;

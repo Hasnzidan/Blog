@@ -1,53 +1,60 @@
 using Blog.Models;
-using Blog.Utilites;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Data
 {
-    public class DbInitializer : IDbInitializer
+    public static class DbInitializer
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-
-        public DbInitializer(
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
-        {
-            _context = context;
-            _userManager = userManager;
-            _roleManager = roleManager;
-        }
-
-        public void Initialize()
+        public static async Task Initialize(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             try
             {
-                if (_context.Database.CanConnect())
+                // Apply any pending migrations
+                await context.Database.MigrateAsync();
+
+                // Create roles if they don't exist
+                string[] roles = { "Admin", "Author", "User" };
+                foreach (var role in roles)
                 {
-                    if (!_roleManager.RoleExistsAsync(WebsiteRoles.WebsiteAdmin).GetAwaiter().GetResult())
+                    if (!await roleManager.RoleExistsAsync(role))
                     {
-                        _roleManager.CreateAsync(new IdentityRole(WebsiteRoles.WebsiteAdmin)).GetAwaiter().GetResult();
-                        _roleManager.CreateAsync(new IdentityRole(WebsiteRoles.WebsiteUser)).GetAwaiter().GetResult();
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                    }
+                }
 
-                        // Create Admin User
-                        var adminUser = new ApplicationUser
+                // Create admin user if it doesn't exist
+                var adminEmail = "admin@example.com";
+                var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+                if (adminUser == null)
+                {
+                    adminUser = new ApplicationUser
+                    {
+                        UserName = adminEmail,
+                        Email = adminEmail,
+                        FirstName = "Admin",
+                        LastName = "User",
+                        EmailConfirmed = true
+                    };
+
+                    try
+                    {
+                        var result = await userManager.CreateAsync(adminUser, "Admin123!");
+                        if (result.Succeeded)
                         {
-                            UserName = "admin@blog.com",
-                            Email = "admin@blog.com",
-                            FirstName = "Admin",
-                            LastName = "User"
-                        };
-
-                        _userManager.CreateAsync(adminUser, "Admin@123").GetAwaiter().GetResult();
-                        _userManager.AddToRoleAsync(adminUser, WebsiteRoles.WebsiteAdmin).GetAwaiter().GetResult();
+                            await userManager.AddToRoleAsync(adminUser, "Admin");
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // Log the error or handle it appropriately
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw;
+                // Log the error or handle it appropriately
             }
         }
     }

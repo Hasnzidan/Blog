@@ -4,7 +4,7 @@
 
 namespace Blog.Migrations
 {
-    public partial class UpdateRelationships : Migration
+    public partial class UpdateRelationshipsWithRequiredFields : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

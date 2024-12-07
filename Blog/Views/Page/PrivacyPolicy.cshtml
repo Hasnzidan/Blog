@@ -1,5 +1,6 @@
 @model Blog.ViewModels.PageVM
 @{
+    Layout = "~/Views/Page/Index.cshtml";
     ViewData["Title"] = "Privacy Policy";
     string pageThumbnail = "";
     if (Model.ThumbnailUrl == null)

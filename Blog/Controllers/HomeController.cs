@@ -1,8 +1,10 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Blog.Models;
 using Blog.Data;
+using Blog.Models;
+using Blog.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace Blog.Controllers
 {
@@ -13,75 +15,64 @@ namespace Blog.Controllers
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _logger = logger;
+            _context = context;
         }
 
-        public async Task<IActionResult> Index(string? categorySlug = null)
+        public async Task<IActionResult> Index(int? categoryId = null)
         {
-            try
+            var currentCulture = CultureInfo.CurrentUICulture.Name;
+            var isArabic = currentCulture == "ar-SA";
+
+            var query = _context.Posts
+                .Include(p => p.Category)
+                .Include(p => p.User)
+                .Where(p => p.IsPublished);
+
+            if (categoryId.HasValue)
             {
-                var postsQuery = _context.Posts
-                    .Include(p => p.ApplicationUser)
-                    .Include(p => p.Category)
-                    .Include(p => p.PostTags)
-                        .ThenInclude(pt => pt.Tag)
-                    .AsQueryable();
-
-                if (!string.IsNullOrEmpty(categorySlug))
-                {
-                    postsQuery = postsQuery.Where(p => p.Category != null && p.Category.Slug == categorySlug);
-                }
-
-                var posts = await postsQuery
-                    .OrderByDescending(p => p.CreateDate)
-                    .Select(p => new Post
-                    {
-                        Id = p.Id,
-                        TitleAr = p.TitleAr ?? string.Empty,
-                        TitleEn = p.TitleEn ?? string.Empty,
-                        Slug = p.Slug ?? string.Empty,
-                        ShortDescriptionAr = p.ShortDescriptionAr ?? string.Empty,
-                        ShortDescriptionEn = p.ShortDescriptionEn ?? string.Empty,
-                        DescriptionAr = p.DescriptionAr ?? string.Empty,
-                        DescriptionEn = p.DescriptionEn ?? string.Empty,
-                        ThumbnailUrl = !string.IsNullOrEmpty(p.ThumbnailUrl) ? p.ThumbnailUrl : "/images/categories/default.jpg",
-                        CreateDate = p.CreateDate,
-                        Category = p.Category,
-                        ApplicationUser = p.ApplicationUser,
-                        PostTags = p.PostTags ?? new List<PostTag>()
-                    })
-                    .ToListAsync();
-
-                // Get all categories for the filter
-                ViewBag.Categories = await _context.Categories
-                    .Where(c => !string.IsNullOrEmpty(c.Name) && !string.IsNullOrEmpty(c.Slug))
-                    .ToListAsync();
-
-                // Set default thumbnail based on category
-                foreach (var post in posts)
-                {
-                    if (string.IsNullOrEmpty(post.ThumbnailUrl))
-                    {
-                        var postCategorySlug = post.Category?.Slug?.ToLower() ?? string.Empty;
-                        post.ThumbnailUrl = postCategorySlug switch
-                        {
-                            "technology" => "/images/categories/technology.jpg",
-                            "programming" => "/images/categories/programming.jpg",
-                            "self-development" => "/images/categories/self-development.jpg",
-                            "entrepreneurship" => "/images/categories/entrepreneurship.jpg",
-                            _ => "/images/categories/default.jpg"
-                        };
-                    }
-                }
-
-                return View(posts);
+                query = query.Where(p => p.CategoryId == categoryId.Value);
             }
-            catch (Exception ex)
+
+            var posts = await query
+                .OrderByDescending(p => p.CreateDate)
+                .Select(p => new PostViewModel
+                {
+                    Id = p.Id,
+                    TitleEn = p.TitleEn ?? string.Empty,
+                    TitleAr = p.TitleAr ?? string.Empty,
+                    ShortDescriptionEn = p.ShortDescriptionEn ?? string.Empty,
+                    ShortDescriptionAr = p.ShortDescriptionAr ?? string.Empty,
+                    CategoryNameEn = p.Category == null ? string.Empty : p.Category.NameEn,
+                    CategoryNameAr = p.Category == null ? string.Empty : p.Category.NameAr,
+                    AuthorName = p.User == null ? string.Empty : $"{p.User.FirstName} {p.User.LastName}",
+                    ThumbnailUrl = string.IsNullOrEmpty(p.ThumbnailUrl) ? "/uploads/thumbnails/default.jpg" : p.ThumbnailUrl,
+                    Slug = p.Slug ?? string.Empty,
+                    CreatedDate = p.CreateDate,
+                    IsPublished = p.IsPublished,
+                    ViewCount = p.ViewCount,
+                    CategoryId = p.CategoryId
+                })
+                .ToListAsync();
+
+            var categories = await _context.Categories
+                .OrderBy(c => isArabic ? c.NameAr : c.NameEn)
+                .Select(c => new CategoryViewModel
+                {
+                    Id = c.Id,
+                    NameEn = c.NameEn ?? string.Empty,
+                    NameAr = c.NameAr ?? string.Empty
+                })
+                .ToListAsync();
+
+            var viewModel = new HomeViewModel
             {
-                _logger.LogError(ex, "Error occurred while fetching posts");
-                return View(new List<Post>());
-            }
+                Posts = posts,
+                Categories = categories,
+                SelectedCategoryId = categoryId
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult Privacy()

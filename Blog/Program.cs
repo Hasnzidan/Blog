@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.Extensions.Options;
 
 namespace Blog
 {
@@ -20,7 +22,7 @@ namespace Blog
 
             // Add services to the container.
             builder.Services.AddControllersWithViews()
-                .AddViewLocalization()
+                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization(options =>
                 {
                     options.DataAnnotationLocalizerProvider = (type, factory) =>
@@ -54,18 +56,8 @@ namespace Blog
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultUI()
                 .AddDefaultTokenProviders();
-
-            builder.Services.AddHttpContextAccessor();
-
-            builder.Services.AddMvc(option => option.EnableEndpointRouting = false)
-                .AddNewtonsoftJson();
-
-            builder.Services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/Account/Login";
-                options.AccessDeniedPath = "/Account/AccessDenied";
-            });
 
             builder.Services.AddNotyf(config =>
             {
@@ -74,45 +66,7 @@ namespace Blog
                 config.Position = NotyfPosition.TopRight;
             });
 
-            // Register DbSeeder as a scoped service
-            builder.Services.AddScoped<DbSeeder>();
-
             var app = builder.Build();
-
-            // Ensure roles are created
-            using (var scope = app.Services.CreateScope())
-            {
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-                // Create roles if they don't exist
-                if (!await roleManager.RoleExistsAsync(WebsiteRoles.WebsiteAdmin))
-                {
-                    await roleManager.CreateAsync(new IdentityRole(WebsiteRoles.WebsiteAdmin));
-                    await roleManager.CreateAsync(new IdentityRole(WebsiteRoles.WebsiteAuthor));
-                    await roleManager.CreateAsync(new IdentityRole(WebsiteRoles.WebsiteUser));
-
-                    // Create admin user
-                    var adminUser = new ApplicationUser
-                    {
-                        UserName = "admin@blog.com",
-                        Email = "admin@blog.com",
-                        FirstName = "Admin",
-                        LastName = "User",
-                        EmailConfirmed = true
-                    };
-
-                    var result = await userManager.CreateAsync(adminUser, "Admin@123");
-                    if (result.Succeeded)
-                    {
-                        await userManager.AddToRoleAsync(adminUser, WebsiteRoles.WebsiteAdmin);
-                    }
-                }
-
-                // Seed initial data
-                var dbSeeder = scope.ServiceProvider.GetRequiredService<DbSeeder>();
-                await dbSeeder.SeedAsync();
-            }
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -121,9 +75,15 @@ namespace Blog
                 app.UseHsts();
             }
 
-            app.UseRequestLocalization();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            var localizationOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
+            if (localizationOptions != null)
+            {
+                app.UseRequestLocalization(localizationOptions.Value);
+            }
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -137,7 +97,43 @@ namespace Blog
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            app.Run();
+            app.MapRazorPages();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+                // Ensure roles exist
+                string[] roles = new[] { "Admin", "User" };
+
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                }
+
+                // Ensure admin user exists
+                string email = "admin@blog.com";
+                string password = "Admin@123";
+
+                if (await userManager.FindByEmailAsync(email) == null)
+                {
+                    var user = new ApplicationUser
+                    {
+                        UserName = email,
+                        Email = email,
+                        FirstName = "Admin",
+                        LastName = "User",
+                        EmailConfirmed = true
+                    };
+
+                    await userManager.CreateAsync(user, password);
+                    await userManager.AddToRoleAsync(user, "Admin");
+                }
+            }
+
+            await app.RunAsync();
         }
     }
 }

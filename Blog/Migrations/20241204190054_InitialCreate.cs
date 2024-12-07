@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -129,7 +129,7 @@ namespace Blog.Migrations
                 column: "ApplicationUserId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

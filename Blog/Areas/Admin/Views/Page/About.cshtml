@@ -1,73 +1,98 @@
 @model Blog.ViewModels.PageVM
+@inject IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = "About Page";
+    ViewData["Title"] = Localizer["AboutPage"];
 }
 
 <div class="container-fluid">
-    <a class="btn btn-primary mb-1" asp-action="Index" asp-controller="Post">Go Back</a>
+    <a class="btn btn-primary mb-1" asp-action="Index" asp-controller="Post">@Localizer["GoBack"]</a>
     <div class="card">
-        <div class="card-header bg-primary ">
-            <h4 class="card-title text-white">About Page</h4>
-        </div>
         <div class="card-body">
             <form asp-action="About" asp-controller="Page" asp-area="Admin" enctype="multipart/form-data">
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="ThumbnailUrl" />
-                <div class="row mb-2 ">
-                    <div class="col-9">
-                        <div class="mb-2">
-                            <label>Title</label>
-                            <input type="text" asp-for="Title" class="form-control" />
-                            <span asp-validation-for="Title" class="text-danger"></span>
+                <input type="hidden" asp-for="Slug" />
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label asp-for="TitleEn" class="form-label"></label>
+                            <input type="text" asp-for="TitleEn" class="form-control" />
+                            <span asp-validation-for="TitleEn" class="text-danger"></span>
                         </div>
-                        <div class="mb-2">
-                            <label>Short Description</label>
-                            <input type="text" asp-for="ShortDescription" class="form-control" />
-                            <span asp-validation-for="ShortDescription" class="text-danger"></span>
+                        <div class="mb-3">
+                            <label asp-for="TitleAr" class="form-label"></label>
+                            <input type="text" asp-for="TitleAr" class="form-control" dir="rtl" />
+                            <span asp-validation-for="TitleAr" class="text-danger"></span>
                         </div>
-                        <div class="mb-2">
-                            <label>Content</label>
-                            <textarea id="richEditor" asp-for="Content" class="custom-file" rows="8"></textarea>
-                            <span asp-validation-for="Content" class="text-danger"></span>
+                        <div class="mb-3">
+                            <label asp-for="ShortDescriptionEn" class="form-label"></label>
+                            <input type="text" asp-for="ShortDescriptionEn" class="form-control" />
+                            <span asp-validation-for="ShortDescriptionEn" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ShortDescriptionAr" class="form-label"></label>
+                            <input type="text" asp-for="ShortDescriptionAr" class="form-control" dir="rtl" />
+                            <span asp-validation-for="ShortDescriptionAr" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ContentEn" class="form-label"></label>
+                            <textarea id="richEditorEn" asp-for="ContentEn" class="form-control" rows="10"></textarea>
+                            <span asp-validation-for="ContentEn" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ContentAr" class="form-label"></label>
+                            <textarea id="richEditorAr" asp-for="ContentAr" class="form-control" rows="10" dir="rtl"></textarea>
+                            <span asp-validation-for="ContentAr" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-3">
-                        <div class="mb-2">
-
-                            @if (Model.ThumbnailUrl == null)
-                            {
-
-                                <img src="~/Thumbnails/defaultthumbnail.jpg" class="img-fluid" id="thumbnail" />
-
-                            }
-                            else
-                            {
-                                <img src="~/Thumbnails/@Model.ThumbnailUrl" class="img-fluid" id="thumbnail" />
-
-                            }
-
-
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="Published">
+                                <label class="form-check-label" asp-for="Published"></label>
+                            </div>
                         </div>
-                        <div class="mb-2">
-                            <label hidden>Thumbnail</label>
-                            <input type="file" asp-for="Thumbnail" class="custom-file" />
+                        <div class="mb-3">
+                            <label asp-for="Thumbnail" class="form-label"></label>
+                            <input type="file" asp-for="Thumbnail" class="form-control" accept="image/*" />
                             <span asp-validation-for="Thumbnail" class="text-danger"></span>
                         </div>
+                        @if (!string.IsNullOrEmpty(Model.ThumbnailUrl))
+                        {
+                            <div class="mb-3">
+                                <img src="@Model.ThumbnailUrl" class="img-fluid" alt="Thumbnail" />
+                            </div>
+                        }
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary w-100">@Localizer["Save"]</button>
+                        </div>
                     </div>
                 </div>
-                <div class="mb-2">
-                    <button type="submit" class="btn btn-primary w-100 ">Save</button>
-                </div>
-
             </form>
         </div>
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
+    <script src="https://cdn.tiny.cloud/1/YOUR_API_KEY/tinymce/5/tinymce.min.js"></script>
     <script>
-        $(".custom-file").on("change", function () {
+        tinymce.init({
+            selector: '#richEditorEn',
+            plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+            toolbar_mode: 'floating',
+            height: 500
+        });
+
+        tinymce.init({
+            selector: '#richEditorAr',
+            plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+            toolbar_mode: 'floating',
+            height: 500,
+            directionality: 'rtl'
+        });
+
+        $(".custom-file-input").on("change", function () {
             var fileName = $(this).val().split("\\").pop();
             $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
             document.getElementById('thumbnail').src = window.URL.createObjectURL(this.files[0])

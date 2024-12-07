@@ -1,0 +1,25 @@
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.Extensions.Options
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+@inject IOptions<RequestLocalizationOptions> LocalizationOptions
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var cultureItems = LocalizationOptions.Value.SupportedUICultures?
+        .Select(c => new SelectListItem { Value = c.Name, Text = c.NativeName })
+        .ToList();
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+}
+
+<div class="dropdown-menu" aria-labelledby="languageDropdown">
+    @foreach (var item in cultureItems!)
+    {
+        <a class="dropdown-item @(item.Value == requestCulture?.RequestCulture.UICulture.Name ? "active" : "")"
+           href="@Url.Action("Change", "Language", new { culture = item.Value, returnUrl })">
+            @item.Text
+        </a>
+    }
+</div>

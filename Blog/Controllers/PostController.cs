@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Blog.Data;
 using Blog.Models;
+using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using AspNetCoreHero.ToastNotification.Abstractions;
@@ -39,7 +40,6 @@ namespace Blog.Controllers
             }
 
             var categories = _context.Categories.ToList();
-            var tags = _context.Tags.ToList();
 
             if (!categories.Any())
             {
@@ -48,15 +48,13 @@ namespace Blog.Controllers
             }
 
             ViewBag.Categories = new SelectList(categories, "Id", "Name");
-            ViewBag.Tags = new SelectList(tags, "Id", "Name");
             return View();
         }
 
         // POST: Post/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TitleAr,TitleEn,ShortDescriptionAr,ShortDescriptionEn,DescriptionAr,DescriptionEn,CategoryId")] Post post, 
-            IFormFile? thumbnail, int[]? selectedTags)
+        public async Task<IActionResult> Create([Bind("TitleAr,TitleEn,ShortDescriptionAr,ShortDescriptionEn,DescriptionAr,DescriptionEn,CategoryId")] Post post, IFormFile? thumbnail)
         {
             if (User.Identity?.IsAuthenticated != true)
             {
@@ -91,19 +89,6 @@ namespace Blog.Controllers
                     post.ThumbnailUrl = "/images/blog/" + uniqueFileName;
                 }
 
-                // Add selected tags
-                if (selectedTags != null)
-                {
-                    foreach (var tagId in selectedTags)
-                    {
-                        var tag = await _context.Tags.FindAsync(tagId);
-                        if (tag != null)
-                        {
-                            post.PostTags.Add(new PostTag { Post = post, Tag = tag });
-                        }
-                    }
-                }
-
                 _context.Add(post);
                 await _context.SaveChangesAsync();
 
@@ -112,10 +97,7 @@ namespace Blog.Controllers
             }
 
             var categories = _context.Categories.ToList();
-            var tags = _context.Tags.ToList();
-
             ViewBag.Categories = new SelectList(categories, "Id", "Name", post.CategoryId);
-            ViewBag.Tags = new SelectList(tags, "Id", "Name");
             return View(post);
         }
 
@@ -130,9 +112,7 @@ namespace Blog.Controllers
 
             var post = await _context.Posts
                 .Include(p => p.Category)
-                .Include(p => p.ApplicationUser)
-                .Include(p => p.PostTags)
-                    .ThenInclude(pt => pt.Tag)
+                .Include(p => p.User)
                 .FirstOrDefaultAsync(p => p.Slug == slug);
 
             if (post == null)
@@ -142,6 +122,99 @@ namespace Blog.Controllers
             }
 
             return View(post);
+        }
+
+        // GET: Post/Edit/5
+        public async Task<IActionResult> Edit(int id)
+        {
+            var post = await _context.Posts
+                .Include(p => p.Category)
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (post == null || post.ApplicationUserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+            {
+                return NotFound();
+            }
+
+            var editVM = new EditPostVM
+            {
+                Id = post.Id,
+                TitleAr = post.TitleAr,
+                TitleEn = post.TitleEn,
+                ShortDescriptionAr = post.ShortDescriptionAr,
+                ShortDescriptionEn = post.ShortDescriptionEn,
+                DescriptionAr = post.DescriptionAr,
+                DescriptionEn = post.DescriptionEn,
+                CategoryId = post.CategoryId,
+                ThumbnailUrl = post.ThumbnailUrl
+            };
+
+            var categories = await _context.Categories.ToListAsync();
+            ViewBag.Categories = new SelectList(categories, "Id", "Name", post.CategoryId);
+
+            return View(editVM);
+        }
+
+        // POST: Post/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditPostVM model, IFormFile? thumbnail)
+        {
+            if (ModelState.IsValid)
+            {
+                var post = await _context.Posts.FindAsync(model.Id);
+                if (post == null || post.ApplicationUserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+                {
+                    return NotFound();
+                }
+
+                post.TitleAr = model.TitleAr ?? string.Empty;
+                post.TitleEn = model.TitleEn ?? string.Empty;
+                post.ShortDescriptionAr = model.ShortDescriptionAr ?? string.Empty;
+                post.ShortDescriptionEn = model.ShortDescriptionEn ?? string.Empty;
+                post.DescriptionAr = model.DescriptionAr ?? string.Empty;
+                post.DescriptionEn = model.DescriptionEn ?? string.Empty;
+                post.CategoryId = model.CategoryId;
+                post.Slug = GenerateSlug(model.TitleEn ?? string.Empty);
+
+                if (thumbnail != null)
+                {
+                    string uploadsFolder = Path.Combine(_environment.WebRootPath, "images", "blog");
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + thumbnail.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await thumbnail.CopyToAsync(fileStream);
+                    }
+
+                    // Delete old thumbnail if exists
+                    if (!string.IsNullOrEmpty(post.ThumbnailUrl))
+                    {
+                        var oldFilePath = Path.Combine(_environment.WebRootPath, post.ThumbnailUrl.TrimStart('/'));
+                        if (System.IO.File.Exists(oldFilePath))
+                        {
+                            System.IO.File.Delete(oldFilePath);
+                        }
+                    }
+
+                    post.ThumbnailUrl = "/images/blog/" + uniqueFileName;
+                }
+
+                await _context.SaveChangesAsync();
+                _notification.Success(_localizer["PostUpdatedSuccessfully"]);
+                return RedirectToAction("Detail", new { slug = post.Slug });
+            }
+
+            var categories = await _context.Categories.ToListAsync();
+            ViewBag.Categories = new SelectList(categories, "Id", "Name", model.CategoryId);
+            return View(model);
         }
 
         private string GenerateSlug(string? title)

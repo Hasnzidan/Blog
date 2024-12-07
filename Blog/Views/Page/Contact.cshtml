@@ -1,5 +1,6 @@
 @model Blog.ViewModels.PageVM
 @{
+    Layout = "~/Views/Page/Index.cshtml";
     ViewData["Title"] = "Contact Us";
     string pageThumbnail = "";
     if (Model.ThumbnailUrl == null)

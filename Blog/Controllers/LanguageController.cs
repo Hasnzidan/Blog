@@ -14,8 +14,8 @@ namespace Blog.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        [HttpPost]
-        public IActionResult SetLanguage(string culture, string returnUrl)
+        [HttpGet]
+        public IActionResult Change(string culture, string returnUrl)
         {
             try
             {
@@ -45,6 +45,12 @@ namespace Blog.Controllers
                 _logger.LogError(ex, "Error setting language culture");
                 return RedirectToAction("Index", "Home");
             }
+        }
+
+        [HttpPost]
+        public IActionResult SetLanguage(string culture, string returnUrl)
+        {
+            return Change(culture, returnUrl);
         }
     }
 }

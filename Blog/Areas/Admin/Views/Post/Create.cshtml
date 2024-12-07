@@ -78,18 +78,12 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label">@Localizer["Tags"]</label>
-                            <select asp-for="SelectedTags" asp-items="ViewBag.Tags" class="form-select tags-select" multiple>
-                            </select>
+                            <label class="form-label">@Localizer["Thumbnail"]</label>
+                            <img src="/Thumbnails/defaultthumbnail.jpg" class="img-fluid thumbnail-preview" id="thumbnail" alt="@Localizer["ThumbnailPreview"]" />
+                            <input type="file" asp-for="Thumbnail" class="form-control" accept="image/*" />
+                            <span asp-validation-for="Thumbnail" class="text-danger"></span>
                         </div>
                     </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">@Localizer["Thumbnail"]</label>
-                    <img src="/Thumbnails/defaultthumbnail.jpg" class="img-fluid thumbnail-preview" id="thumbnail" alt="@Localizer["ThumbnailPreview"]" />
-                    <input type="file" asp-for="Thumbnail" class="form-control" accept="image/*" />
-                    <span asp-validation-for="Thumbnail" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
@@ -102,77 +96,35 @@
 </div>
 
 @section Styles {
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .thumbnail-preview {
             max-height: 200px;
             object-fit: contain;
             margin-bottom: 1rem;
         }
-        .select2-container {
-            width: 100% !important;
-        }
-        .select2-container .select2-selection--multiple {
-            min-height: 38px;
-            border: 1px solid #ced4da;
-            border-radius: 0.25rem;
-        }
-        .select2-container--default .select2-selection--multiple .select2-selection__choice {
-            background-color: #007bff;
-            border: none;
-            color: white;
-            padding: 2px 8px;
-            margin: 4px;
-            border-radius: 4px;
-        }
-        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-            color: white;
-            margin-right: 5px;
-        }
     </style>
 }
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdn.ckeditor.com/ckeditor5/27.1.0/classic/ckeditor.js"></script>
     <script>
-        $(document).ready(function() {
-            $('.tags-select').select2({
-                placeholder: "@Localizer["SelectTags"]",
-                allowClear: true,
-                theme: "classic"
+        ClassicEditor
+            .create(document.querySelector('#richEditorAr'))
+            .catch(error => {
+                console.error(error);
             });
-        });
+
+        ClassicEditor
+            .create(document.querySelector('#richEditorEn'))
+            .catch(error => {
+                console.error(error);
+            });
 
         $(".custom-file").on("change", function () {
             var fileName = $(this).val().split("\\").pop();
             $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
             document.getElementById('thumbnail').src = window.URL.createObjectURL(this.files[0])
-        });
-
-        tinymce.init({
-            selector: 'textarea#richEditorAr',
-            height: 300,
-            menubar: false,
-            plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table paste code help wordcount'
-            ],
-            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-        });
-
-        tinymce.init({
-            selector: 'textarea#richEditorEn',
-            height: 300,
-            menubar: false,
-            plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table paste code help wordcount'
-            ],
-            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
         });
     </script>
 }

@@ -1,265 +1,96 @@
 @model Blog.Models.Post
-@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = Localizer["CreatePost"];
+    ViewData["Title"] = Localizer["Create Post"];
 }
 
-@section Styles {
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-    <style>
-        .create-post-header {
-            background: linear-gradient(135deg, #1a1a1a 0%, #363636 100%);
-            color: white;
-            padding: 40px 0;
-            margin-bottom: 40px;
-        }
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">@Localizer["Create New Post"]</h3>
+                </div>
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div class="card-body">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        .form-container {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
+                        <div class="form-group">
+                            <label asp-for="TitleAr" class="control-label">@Localizer["Title (Arabic)"]</label>
+                            <input asp-for="TitleAr" class="form-control" dir="rtl" />
+                            <span asp-validation-for="TitleAr" class="text-danger"></span>
+                        </div>
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+                        <div class="form-group">
+                            <label asp-for="TitleEn" class="control-label">@Localizer["Title (English)"]</label>
+                            <input asp-for="TitleEn" class="form-control" />
+                            <span asp-validation-for="TitleEn" class="text-danger"></span>
+                        </div>
 
-        .form-label {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
+                        <div class="form-group">
+                            <label asp-for="ContentAr" class="control-label">@Localizer["Content (Arabic)"]</label>
+                            <textarea asp-for="ContentAr" class="form-control" rows="10" dir="rtl"></textarea>
+                            <span asp-validation-for="ContentAr" class="text-danger"></span>
+                        </div>
 
-        .form-control {
-            border-radius: 8px;
-            padding: 10px 15px;
-            border: 1px solid #dee2e6;
-        }
+                        <div class="form-group">
+                            <label asp-for="ContentEn" class="control-label">@Localizer["Content (English)"]</label>
+                            <textarea asp-for="ContentEn" class="form-control" rows="10"></textarea>
+                            <span asp-validation-for="ContentEn" class="text-danger"></span>
+                        </div>
 
-        .form-control:focus {
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
-            border-color: #80bdff;
-        }
+                        <div class="form-group">
+                            <label asp-for="CategoryId" class="control-label">@Localizer["Category"]</label>
+                            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
+                                <option value="">@Localizer["-- Select Category --"]</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
 
-        .select2-container .select2-selection--multiple {
-            min-height: 42px;
-            border-radius: 8px;
-        }
+                        <div class="form-group">
+                            <label asp-for="Slug" class="control-label">@Localizer["URL Slug"]</label>
+                            <input asp-for="Slug" class="form-control" />
+                            <span asp-validation-for="Slug" class="text-danger"></span>
+                            <small class="form-text text-muted">@Localizer["The URL-friendly version of the title"]</small>
+                        </div>
 
-        .btn-submit {
-            padding: 12px 30px;
-            font-size: 1.1rem;
-            border-radius: 8px;
-            background: #007bff;
-            color: white;
-            border: none;
-            transition: all 0.3s;
-        }
+                        <div class="form-group">
+                            <label for="thumbnail" class="control-label">@Localizer["Thumbnail"]</label>
+                            <input type="file" name="thumbnail" id="thumbnail" class="form-control" accept="image/*" />
+                        </div>
 
-        .btn-submit:hover {
-            background: #0056b3;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input asp-for="IsPublished" class="custom-control-input" />
+                                <label asp-for="IsPublished" class="custom-control-label">@Localizer["Publish immediately"]</label>
+                            </div>
+                        </div>
+                    </div>
 
-        .thumbnail-preview {
-            max-width: 200px;
-            margin-top: 10px;
-            border-radius: 8px;
-            display: none;
-        }
-
-        .note-editor {
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        /* RTL Support */
-        [dir="rtl"] .note-editor {
-            text-align: right;
-        }
-
-        [dir="rtl"] .note-toolbar {
-            direction: ltr;
-        }
-
-        [dir="rtl"] .select2-container {
-            text-align: right;
-        }
-    </style>
-}
-
-<div class="create-post-header">
-    <div class="container">
-        <h1 class="text-center">@Localizer["CreateNewPost"]</h1>
-        <p class="text-center lead">@Localizer["ShareYourThoughts"]</p>
-    </div>
-</div>
-
-<div class="container mb-5">
-    <div class="form-container">
-        <form asp-action="Create" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <!-- Arabic Content -->
-            <h3 class="mb-4">@Localizer["ArabicContent"]</h3>
-            <div class="form-group">
-                <label asp-for="TitleAr" class="form-label">@Localizer["TitleAr"]</label>
-                <input asp-for="TitleAr" class="form-control" placeholder="@Localizer["EnterTitleAr"]" dir="rtl" />
-                <span asp-validation-for="TitleAr" class="text-danger"></span>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">@Localizer["Create"]</button>
+                        <a asp-action="Index" class="btn btn-secondary">@Localizer["Back to List"]</a>
+                    </div>
+                </form>
             </div>
-
-            <div class="form-group">
-                <label asp-for="ShortDescriptionAr" class="form-label">@Localizer["ShortDescriptionAr"]</label>
-                <textarea asp-for="ShortDescriptionAr" class="form-control" rows="3" 
-                          placeholder="@Localizer["EnterShortDescriptionAr"]" dir="rtl"></textarea>
-                <span asp-validation-for="ShortDescriptionAr" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="DescriptionAr" class="form-label">@Localizer["ContentAr"]</label>
-                <textarea asp-for="DescriptionAr" id="summernoteAr" class="form-control"></textarea>
-                <span asp-validation-for="DescriptionAr" class="text-danger"></span>
-            </div>
-
-            <!-- English Content -->
-            <h3 class="mb-4 mt-5">@Localizer["EnglishContent"]</h3>
-            <div class="form-group">
-                <label asp-for="TitleEn" class="form-label">@Localizer["TitleEn"]</label>
-                <input asp-for="TitleEn" class="form-control" placeholder="@Localizer["EnterTitleEn"]" dir="ltr" />
-                <span asp-validation-for="TitleEn" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="ShortDescriptionEn" class="form-label">@Localizer["ShortDescriptionEn"]</label>
-                <textarea asp-for="ShortDescriptionEn" class="form-control" rows="3" 
-                          placeholder="@Localizer["EnterShortDescriptionEn"]" dir="ltr"></textarea>
-                <span asp-validation-for="ShortDescriptionEn" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="DescriptionEn" class="form-label">@Localizer["ContentEn"]</label>
-                <textarea asp-for="DescriptionEn" id="summernoteEn" class="form-control"></textarea>
-                <span asp-validation-for="DescriptionEn" class="text-danger"></span>
-            </div>
-
-            <!-- Common Fields -->
-            <div class="form-group">
-                <label asp-for="CategoryId" class="form-label">@Localizer["Category"]</label>
-                <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
-                    <option value="">@Localizer["SelectCategory"]</option>
-                </select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">@Localizer["Tags"]</label>
-                <select id="tags" name="selectedTags" class="form-control" multiple>
-                    @foreach (var tag in ViewBag.Tags)
-                    {
-                        <option value="@tag.Value">@tag.Text</option>
-                    }
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">@Localizer["ThumbnailImage"]</label>
-                <input type="file" name="thumbnail" class="form-control" accept="image/*" id="thumbnailInput" />
-                <img id="thumbnailPreview" class="thumbnail-preview" alt="@Localizer["ThumbnailPreview"]" />
-            </div>
-
-            <div class="text-end mt-4">
-                <a asp-action="Index" class="btn btn-secondary me-2">@Localizer["Cancel"]</a>
-                <button type="submit" class="btn btn-submit">
-                    <i class="fas fa-paper-plane me-2"></i>@Localizer["PublishPost"]
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
     <script>
         $(document).ready(function() {
-            // Initialize Summernote editor for Arabic content
-            $('#summernoteAr').summernote({
-                height: 300,
-                toolbar: [
-                    ['style', ['style']],
-                    ['font', ['bold', 'italic', 'underline', 'clear']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['table', ['table']],
-                    ['insert', ['link', 'picture', 'video']],
-                    ['view', ['fullscreen', 'codeview']]
-                ],
-                callbacks: {
-                    onInit: function() {
-                        $(this).summernote('code', '');
-                        $(this).parent().find('.note-editable').attr('dir', 'rtl');
-                    }
-                }
-            });
-
-            // Initialize Summernote editor for English content
-            $('#summernoteEn').summernote({
-                height: 300,
-                toolbar: [
-                    ['style', ['style']],
-                    ['font', ['bold', 'italic', 'underline', 'clear']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['table', ['table']],
-                    ['insert', ['link', 'picture', 'video']],
-                    ['view', ['fullscreen', 'codeview']]
-                ],
-                callbacks: {
-                    onInit: function() {
-                        $(this).summernote('code', '');
-                        $(this).parent().find('.note-editable').attr('dir', 'ltr');
-                    }
-                }
-            });
-
-            // Initialize Select2 for tags
-            $('#tags').select2({
-                placeholder: '@Localizer["SelectTags"]',
-                tags: true,
-                tokenSeparators: [',', ' '],
-                theme: 'bootstrap4'
-            });
-
-            // Thumbnail preview
-            $('#thumbnailInput').change(function() {
-                const file = this.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        $('#thumbnailPreview').attr('src', e.target.result).show();
-                    }
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            // Form validation
-            $('form').on('submit', function() {
-                if ($('#summernoteAr').summernote('isEmpty') || $('#summernoteEn').summernote('isEmpty')) {
-                    alert('@Localizer["PleaseEnterContent"]');
-                    return false;
-                }
-                
-                if (!$('#TitleAr').val() || !$('#TitleEn').val()) {
-                    alert('@Localizer["PleaseEnterTitle"]');
-                    return false;
-                }
-
-                return true;
+            // Auto-generate slug from title
+            $('#TitleEn').on('input', function() {
+                var title = $(this).val();
+                var slug = title.toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+                    .replace(/\s+/g, '-')         // Replace spaces with hyphens
+                    .replace(/-+/g, '-');         // Remove consecutive hyphens
+                $('#Slug').val(slug);
             });
         });
     </script>
-
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

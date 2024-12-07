@@ -6,15 +6,12 @@ namespace Blog.ViewModels
         public int PostsCount { get; set; }
         public int PublishedPostsCount { get; set; }
         public int CategoriesCount { get; set; }
-        public int TagsCount { get; set; }
         public int CommentsCount { get; set; }
         public int PendingCommentsCount { get; set; }
         public int TotalViews { get; set; }
         public List<DashboardPostViewModel> LatestPosts { get; set; } = new();
         public List<DashboardPostViewModel> TopPosts { get; set; } = new();
         public List<CommentViewModel> LatestComments { get; set; } = new();
-        public Dictionary<string, int> PostsByCategory { get; set; } = new();
-        public Dictionary<string, int> PostsByTag { get; set; } = new();
     }
 
     public class DashboardPostViewModel

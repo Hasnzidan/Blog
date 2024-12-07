@@ -76,14 +76,11 @@
                         <partial name="_LoginPartial" />
                     }
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle px-lg-3 py-3 py-lg-4" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-globe"></i>
-                            @System.Globalization.CultureInfo.CurrentCulture.NativeName
+                        <a class="nav-link dropdown-toggle px-lg-3 py-3 py-lg-4" href="#" id="languageDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            @(System.Threading.Thread.CurrentThread.CurrentUICulture.Name == "ar-SA" ? "العربية" : "English")
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="languageDropdown">
-                            <li><a class="dropdown-item" asp-controller="Language" asp-action="Change" asp-route-culture="ar-SA">العربية</a></li>
-                            <li><a class="dropdown-item" asp-controller="Language" asp-action="Change" asp-route-culture="en-US">English</a></li>
-                        </ul>
+                        <partial name="_SelectLanguagePartial" />
                     </li>
                 </ul>
             </div>

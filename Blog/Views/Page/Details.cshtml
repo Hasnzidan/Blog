@@ -9,9 +9,9 @@
         <div class="col-md-12">
             <h1>@Model.Title</h1>
             
-            @if (!string.IsNullOrEmpty(Model.ThumbnailUrl))
+            @if (!string.IsNullOrEmpty(Model.Thumbnail))
             {
-                <img src="@Model.ThumbnailUrl" class="img-fluid mb-4" alt="@Model.Title">
+                <img src="@Url.Content($"~/uploads/pages/{Model.Title}/{Model.Thumbnail}")" alt="@Model.Title" class="img-fluid mb-3" />
             }
 
             <div class="content">

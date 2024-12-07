@@ -81,7 +81,7 @@ namespace Blog.Areas.Admin.Controllers
                     var user = await _userManager.FindByIdAsync(userId);
                     if (user != null)
                     {
-                        result = await _userManager.AddToRoleAsync(user, model.RoleName);
+                        result = await _userManager.AddToRoleAsync(user, model.RoleName ?? string.Empty);
                         if (!result.Succeeded)
                             Errors(result);
                     }
@@ -91,7 +91,7 @@ namespace Blog.Areas.Admin.Controllers
                     var user = await _userManager.FindByIdAsync(userId);
                     if (user != null)
                     {
-                        result = await _userManager.RemoveFromRoleAsync(user, model.RoleName);
+                        result = await _userManager.RemoveFromRoleAsync(user, model.RoleName ?? string.Empty);
                         if (!result.Succeeded)
                             Errors(result);
                     }
@@ -101,7 +101,7 @@ namespace Blog.Areas.Admin.Controllers
             if (ModelState.IsValid)
                 return RedirectToAction(nameof(Index));
             else
-                return await Edit(model.RoleId);
+                return model.RoleId != null ? await Edit(model.RoleId) : RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
